@@ -193,7 +193,7 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
 .rsw{position:absolute;width:50%;height:1px;background:linear-gradient(90deg,transparent,var(--cyan));top:50%;left:50%;transform-origin:left center;animation:rswe 3s linear infinite;box-shadow:0 0 4px var(--cyan)}
 @keyframes rswe{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-.pr{display:none!important;}.main{grid-template-columns:200px 1fr!important;}</style>
+.main{grid-template-columns:200px 1fr!important;}</style>
 </head>
 <body>
 <div class="cor ctl"></div><div class="cor ctr"></div>
@@ -290,8 +290,8 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
 <!-- RIGHT PANEL -->
 <div class="pr">
   <div class="rtabs">
-    <div class="rtab a" onclick="swtab('tarefas',this)">ClickUp</div>
-    <div class="rtab" onclick="swtab('int',this)">Integrações</div>
+    
+    <div class="rtab a" onclick="swtab('int',this)">Integrações</div>
     <div class="rtab" onclick="swtab('tok',this)">Tokens</div>
   </div>
 
@@ -307,7 +307,7 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
   </div>
 
   <!-- INTEGRATIONS -->
-  <div class="rcon" id="rcon-int">
+  <div class="rcon on" id="rcon-int">
     <div class="slbl">IAs Conectadas</div>
     <div class="ii on"><span>🧠</span><div style="flex:1"><div class="iin">Claude (Anthropic)</div><div class="iid">claude-sonnet-4-6 · API</div></div><div class="ibg bok">ON</div></div>
     <div class="ii on"><span>🔍</span><div style="flex:1"><div class="iin">Gemini Pro (Google)</div><div class="iid">gemini-2.5-pro · API</div></div><div class="ibg bok">ON</div></div>
