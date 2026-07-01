@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS — ACT Digital</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#00e5ff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NEXUS">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&display=swap');
+:root {
+  --cyan:#00e5ff;--cyan2:#00bcd4;--cyan-dim:rgba(0,229,255,0.12);
+  --bg:#020c10;--panel:rgba(0,229,255,0.04);--border:rgba(0,229,255,0.18);
+  --border-b:rgba(0,229,255,0.4);--text:#e0f7fa;--muted:rgba(0,229,255,0.5);
+  --dim:rgba(0,229,255,0.22);--gold:#F5B113;--green:#00e676;--red:#ff1744;
+  --purple:#b388ff;--blue:#4285f4;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Share Tech Mono',monospace;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;position:relative}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.07) 2px,rgba(0,0,0,0.07) 4px);pointer-events:none;z-index:1000}
+body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.layout{position:relative;z-index:10;display:grid;grid-template-columns:230px 1fr 240px;grid-template-rows:48px 1fr 96px;height:100vh}
+
+/* TOPBAR */
+.topbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--border);background:rgba(0,20,25,0.95)}
+.brand{font-family:'Orbitron',monospace;font-size:15px;font-weight:900;color:var(--cyan);letter-spacing:6px;text-shadow:0 0 20px var(--cyan),0 0 40px rgba(0,229,255,0.3)}
+.vtag{font-size:9px;color:var(--dim);letter-spacing:2px;border:1px solid var(--border);padding:2px 6px;border-radius:2px;margin-left:10px}
+.top-c{display:flex;align-items:center;gap:20px;font-size:10px;color:var(--muted);letter-spacing:1px}
+.sol{display:flex;align-items:center;gap:6px;color:var(--cyan)}
+.pdot{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:pg 2s infinite}
+@keyframes pg{0%,100%{box-shadow:0 0 0 0 rgba(0,229,255,0.6)}50%{box-shadow:0 0 0 6px rgba(0,229,255,0)}}
+#clock{font-family:'Orbitron',monospace;font-size:14px;color:var(--cyan);text-shadow:0 0 10px var(--cyan);letter-spacing:2px}
+#dt{font-size:10px;color:var(--muted);letter-spacing:1px}
+
+/* PANELS */
+.pl,.pr{background:rgba(0,15,20,0.85);padding:14px 12px;display:flex;flex-direction:column;gap:11px;overflow-y:auto}
+.pl{border-right:1px solid var(--border)}
+.pr{border-left:1px solid var(--border)}
+.pl::-webkit-scrollbar,.pr::-webkit-scrollbar{width:3px}
+.pl::-webkit-scrollbar-thumb,.pr::-webkit-scrollbar-thumb{background:var(--border)}
+.slbl{font-size:8px;color:var(--dim);letter-spacing:3px;text-transform:uppercase;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.slbl::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* AGENTS */
+.ar{display:flex;align-items:center;gap:8px;padding:7px 8px;border:1px solid var(--border);border-radius:3px;background:var(--panel);cursor:pointer;transition:all .2s;position:relative;overflow:hidden;margin-bottom:4px}
+.ar::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:transparent}
+.ar.working::before{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+.ar.done::before{background:var(--green)}
+.ar.waiting::before{background:var(--gold)}
+.ar:hover{border-color:var(--border-b)}
+.anm{font-size:10px;color:var(--cyan);letter-spacing:1px}
+.ast{font-size:9px;color:var(--dim);margin-top:1px}
+.adot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.dc{background:var(--cyan);animation:pg 1.5s infinite}
+.dg{background:var(--green)}
+.dw{background:var(--gold)}
+.di{background:var(--dim)}
+
+/* BARS */
+.br{margin-bottom:7px}
+.bl{display:flex;justify-content:space-between;font-size:9px;color:var(--dim);margin-bottom:3px}
+.bt{height:3px;background:rgba(0,229,255,0.08);border-radius:2px;overflow:hidden}
+.bf{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--cyan2),var(--cyan));box-shadow:0 0 6px var(--cyan);transition:width 1.5s ease}
+
+/* MINI STAT */
+.ms{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid rgba(0,229,255,0.06);font-size:10px}
+.msl{color:var(--dim)}.msv{color:var(--cyan);font-weight:700}
+
+/* CENTER */
+.ca{display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;background:radial-gradient(ellipse at center,rgba(0,30,40,0.8) 0%,var(--bg) 70%)}
+.arc{position:relative;width:290px;height:290px;flex-shrink:0}
+.ring{position:absolute;border-radius:50%;border-style:solid;top:50%;left:50%;transform:translate(-50%,-50%)}
+.r1{width:290px;height:290px;border:1px solid rgba(0,229,255,0.1);animation:rs 30s linear infinite reverse}
+.r2{width:256px;height:256px;border:1px solid rgba(0,229,255,0.18);animation:rs 20s linear infinite}
+.r3{width:222px;height:222px;border:2px solid rgba(0,229,255,0.12);border-top-color:var(--cyan);animation:rs 8s linear infinite}
+.r4{width:188px;height:188px;border:1px solid rgba(0,229,255,0.22);border-bottom-color:var(--cyan);animation:rs 6s linear infinite reverse}
+.r5{width:154px;height:154px;border:2px solid rgba(0,229,255,0.28);border-left-color:var(--cyan);border-right-color:var(--cyan);animation:rs 4s linear infinite}
+.r6{width:120px;height:120px;border:1px solid rgba(0,229,255,0.35);animation:rs 3s linear infinite reverse}
+@keyframes rs{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+.core{position:absolute;width:86px;height:86px;top:50%;left:50%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(0,229,255,0.9) 0%,rgba(0,180,220,0.6) 30%,rgba(0,100,150,0.3) 60%,transparent 80%);box-shadow:0 0 20px var(--cyan),0 0 40px rgba(0,229,255,0.4),0 0 80px rgba(0,229,255,0.15),inset 0 0 20px rgba(255,255,255,0.3);animation:cb 3s ease-in-out infinite;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.core::before{content:'';position:absolute;width:52px;height:52px;border-radius:50%;border:2px solid rgba(255,255,255,0.5)}
+.ci{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,0.9);box-shadow:0 0 15px #fff,0 0 30px var(--cyan);position:relative;z-index:2}
+@keyframes cb{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.06);box-shadow:0 0 30px var(--cyan),0 0 60px rgba(0,229,255,0.5),0 0 120px rgba(0,229,255,0.25),inset 0 0 30px rgba(255,255,255,0.4)}}
+.rip{position:absolute;width:108px;height:108px;border-radius:50%;border:1px solid var(--cyan);top:50%;left:50%;transform:translate(-50%,-50%) scale(1);opacity:0;pointer-events:none}
+.rip.on{animation:ro 1.5s ease-out infinite}
+.rip:nth-child(2).on{animation-delay:.5s}
+@keyframes ro{0%{transform:translate(-50%,-50%) scale(.8);opacity:.6}100%{transform:translate(-50%,-50%) scale(2.6);opacity:0}}
+.ms-lbl{position:absolute;bottom:-24px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--dim);letter-spacing:2px;white-space:nowrap;transition:color .3s}
+.ms-lbl.on{color:var(--cyan);text-shadow:0 0 8px var(--cyan)}
+.ms-lbl.sp{color:var(--gold);text-shadow:0 0 8px var(--gold)}
+
+/* WAVEFORM */
+.wf{display:flex;align-items:center;gap:3px;height:22px;margin-top:18px}
+.wb{width:3px;border-radius:2px;background:var(--cyan);opacity:.3;transition:height .1s,opacity .1s}
+.wb.on{opacity:1;box-shadow:0 0 4px var(--cyan)}
+
+/* CONTROLS */
+.vc{display:flex;align-items:center;gap:10px;margin-top:10px}
+.bv{width:42px;height:42px;border-radius:50%;border:1px solid var(--border-b);background:var(--cyan-dim);color:var(--cyan);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;position:relative}
+.bv:hover{background:rgba(0,229,255,0.2);box-shadow:0 0 16px rgba(0,229,255,0.3)}
+.bv.on{background:rgba(0,229,255,0.22);border-color:var(--cyan);box-shadow:0 0 20px rgba(0,229,255,0.5);animation:rp 1.5s infinite}
+@keyframes rp{0%,100%{box-shadow:0 0 0 0 rgba(0,229,255,0.4),0 0 20px rgba(0,229,255,0.5)}50%{box-shadow:0 0 0 8px rgba(0,229,255,0),0 0 30px rgba(0,229,255,0.6)}}
+.bm{width:30px;height:30px;border-radius:50%;border:1px solid var(--border);background:transparent;color:var(--dim);font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.bm:hover{border-color:var(--border-b);color:var(--cyan)}
+.bm.muted{color:var(--red);border-color:rgba(255,23,68,.4)}
+.tra{width:100%;max-width:430px;margin-top:10px;min-height:34px;text-align:center}
+.trt{font-size:11px;color:var(--muted);letter-spacing:.5px;line-height:1.5;transition:all .3s}
+.trt.us{color:var(--text)}.trt.nx{color:var(--cyan);text-shadow:0 0 10px rgba(0,229,255,0.4)}
+.tir{display:flex;gap:8px;margin-top:8px;width:100%;max-width:430px}
+.ti{flex:1;background:rgba(0,229,255,0.04);border:1px solid var(--border);border-radius:3px;padding:7px 12px;font-size:11px;color:var(--text);font-family:'Share Tech Mono',monospace;outline:none;transition:border-color .2s}
+.ti:focus{border-color:var(--cyan);box-shadow:0 0 8px rgba(0,229,255,0.12)}
+.ti::placeholder{color:var(--dim)}
+.ts{padding:7px 14px;background:var(--cyan-dim);border:1px solid var(--border-b);border-radius:3px;color:var(--cyan);font-size:10px;font-family:'Share Tech Mono',monospace;cursor:pointer;letter-spacing:1px;transition:all .2s}
+.ts:hover{background:rgba(0,229,255,0.2)}
+
+/* RIGHT TABS */
+.rtabs{display:flex;border-bottom:1px solid var(--border);margin:-14px -12px 10px -12px;background:rgba(0,10,15,.6)}
+.rtab{flex:1;padding:8px 4px;font-size:8px;letter-spacing:1px;color:var(--dim);cursor:pointer;border-bottom:2px solid transparent;text-align:center;transition:all .15s;text-transform:uppercase}
+.rtab:hover{color:var(--muted)}
+.rtab.a{color:var(--cyan);border-bottom-color:var(--cyan)}
+.rcon{display:none}.rcon.a{display:block}
+
+/* CLICKUP TASKS */
+.cu-task{display:flex;align-items:flex-start;gap:8px;padding:7px 8px;border:1px solid var(--border);border-radius:3px;background:var(--panel);margin-bottom:4px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.cu-task::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--cyan)}
+.cu-task:hover{border-color:var(--border-b);background:rgba(0,229,255,0.06)}
+.cu-task-name{font-size:10px;color:var(--text);flex:1;line-height:1.4}
+.cu-task-btn{font-size:8px;padding:2px 6px;border-radius:2px;background:var(--cyan-dim);color:var(--cyan);border:1px solid var(--border-b);cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0}
+.cu-task-btn:hover{background:rgba(0,229,255,0.25)}
+.cu-count{font-size:9px;color:var(--gold);background:rgba(245,177,19,.1);border:1px solid rgba(245,177,19,.2);padding:1px 6px;border-radius:2px;margin-left:auto}
+
+/* INTEGRATIONS */
+.ii{display:flex;align-items:center;gap:8px;padding:7px 8px;border:1px solid var(--border);border-radius:3px;background:var(--panel);margin-bottom:4px;position:relative;overflow:hidden}
+.ii::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px}
+.ii.on::before{background:var(--green)}
+.ii.pt::before{background:var(--gold)}
+.ii.off::before{background:var(--red)}
+.iin{font-size:10px;color:var(--text)}
+.iid{font-size:8px;color:var(--dim);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ibg{font-size:8px;padding:2px 5px;border-radius:2px;flex-shrink:0}
+.bok{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.25)}
+.bwn{background:rgba(245,177,19,.1);color:var(--gold);border:1px solid rgba(245,177,19,.25)}
+.bof{background:rgba(255,23,68,.1);color:var(--red);border:1px solid rgba(255,23,68,.25)}
+
+/* TOKENS */
+.tc{padding:8px 9px;border:1px solid var(--border);border-radius:3px;background:var(--panel);margin-bottom:6px}
+.th{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.tn{font-size:10px;color:var(--cyan);letter-spacing:1px}
+.tm{font-size:8px;color:var(--dim)}
+.tns{display:flex;justify-content:space-between;margin-bottom:5px}
+.tnv{text-align:center}
+.tv{font-size:12px;color:var(--text);font-family:'Orbitron',monospace}
+.tv.u{color:var(--cyan)}.tv.c{color:var(--gold)}
+.tl{font-size:7px;color:var(--dim);letter-spacing:1px;margin-top:1px}
+.tbt{height:2px;background:rgba(0,229,255,0.08);border-radius:2px;overflow:hidden}
+.tbf{height:100%;border-radius:2px;transition:width 1s ease}
+.tsess{font-size:8px;color:var(--dim);margin-top:4px;text-align:right}
+
+/* BOTTOM */
+.bot{grid-column:1/-1;border-top:1px solid var(--border);background:rgba(0,15,20,.95);display:flex;align-items:stretch;overflow:hidden}
+.bfeed{flex:1;overflow:hidden;padding:8px 16px;border-right:1px solid var(--border);display:flex;flex-direction:column;justify-content:center;gap:3px}
+.fh{font-size:8px;color:var(--dim);letter-spacing:2px;margin-bottom:3px}
+.ft{display:flex;flex-direction:column;gap:2px}
+.fl{display:flex;align-items:center;gap:8px;font-size:10px;animation:si .3s ease;white-space:nowrap;overflow:hidden}
+@keyframes si{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.fa{color:var(--cyan);font-size:9px;letter-spacing:1px;flex-shrink:0}
+.ftime{color:var(--dim);font-size:9px;flex-shrink:0}
+.ftx{color:var(--muted);font-size:10px;overflow:hidden;text-overflow:ellipsis}
+.bstats{display:flex;align-items:center;flex-shrink:0}
+.bst{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:0 16px;border-right:1px solid var(--border);height:100%}
+.bsv{font-family:'Orbitron',monospace;font-size:13px;color:var(--cyan);text-shadow:0 0 8px var(--cyan);line-height:1}
+.bsl{font-size:7px;color:var(--dim);letter-spacing:1px}
+
+/* CORNERS */
+.cor{position:fixed;width:36px;height:36px;pointer-events:none;z-index:500}
+.ctl{top:56px;left:0;border-top:1px solid var(--border-b);border-left:1px solid var(--border-b)}
+.ctr{top:56px;right:0;border-top:1px solid var(--border-b);border-right:1px solid var(--border-b)}
+.cbl{bottom:8px;left:0;border-bottom:1px solid var(--border-b);border-left:1px solid var(--border-b)}
+.cbr{bottom:8px;right:0;border-bottom:1px solid var(--border-b);border-right:1px solid var(--border-b)}
+
+/* NOTIF */
+.notif{position:fixed;top:58px;right:12px;background:rgba(0,20,25,.97);border:1px solid var(--border-b);border-radius:4px;padding:9px 13px;font-size:11px;color:var(--cyan);box-shadow:0 0 20px rgba(0,229,255,.2);z-index:999;max-width:260px;opacity:0;transform:translateX(16px);transition:all .3s;pointer-events:none}
+.notif.show{opacity:1;transform:translateX(0)}
+.ntit{font-size:8px;color:var(--dim);letter-spacing:2px;margin-bottom:3px}
+
+/* RADAR */
+.rad{position:relative;width:44px;height:44px}
+.rring{position:absolute;border-radius:50%;border:1px solid rgba(0,229,255,.18);top:50%;left:50%;transform:translate(-50%,-50%)}
+.rsw{position:absolute;width:50%;height:1px;background:linear-gradient(90deg,transparent,var(--cyan));top:50%;left:50%;transform-origin:left center;animation:rswe 3s linear infinite;box-shadow:0 0 4px var(--cyan)}
+@keyframes rswe{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+</style>
+</head>
+<body>
+<div class="cor ctl"></div><div class="cor ctr"></div>
+<div class="cor cbl"></div><div class="cor cbr"></div>
+<div class="notif" id="notif"><div class="ntit">NEXUS</div><div id="ntxt"></div></div>
+
+<div class="layout">
+<!-- TOPBAR -->
+<div class="topbar">
+  <div style="display:flex;align-items:center">
+    <div class="brand">NEXUS</div>
+    <div class="vtag">v2.1 · ACT DIGITAL</div>
+  </div>
+  <div class="top-c">
+    <div class="sol"><div class="pdot"></div>SISTEMA ONLINE</div>
+    <span style="color:var(--dim)">·</span>
+    <span>4 AGENTES</span>
+    <span style="color:var(--dim)">·</span>
+    <span id="hstat">CLAUDE → PLANEJANDO</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:16px">
+    <div id="dt"></div>
+    <div id="clock"></div>
+  </div>
+</div>
+
+<!-- LEFT PANEL -->
+<div class="pl">
+  <div>
+    <div class="slbl">Agentes</div>
+    <div class="ar done"><span>🔍</span><div style="flex:1"><div class="anm">GEMINI</div><div class="ast">pesquisa concluída</div></div><div class="adot dg"></div></div>
+    <div class="ar working"><span>🧠</span><div style="flex:1"><div class="anm">CLAUDE</div><div class="ast">escrevendo spec...</div></div><div class="adot dc"></div></div>
+    <div class="ar waiting"><span>⚙️</span><div style="flex:1"><div class="anm">OPENCODE</div><div class="ast">aguardando handoff</div></div><div class="adot dw"></div></div>
+    <div class="ar"><span>🔎</span><div style="flex:1"><div class="anm">ZCODE</div><div class="ast">aguardando</div></div><div class="adot di"></div></div>
+  </div>
+  <div>
+    <div class="slbl">Pipeline</div>
+    <div class="br"><div class="bl"><span>NEXUS Executor</span><span>50%</span></div><div class="bt"><div class="bf" style="width:50%"></div></div></div>
+    <div class="br"><div class="bl"><span>CS Agent</span><span>85%</span></div><div class="bt"><div class="bf" style="width:85%"></div></div></div>
+    <div class="br"><div class="bl"><span>Dashboard ACT</span><span>10%</span></div><div class="bt"><div class="bf" style="width:10%"></div></div></div>
+  </div>
+  <div>
+    <div class="slbl">Status</div>
+    <div class="ms"><span class="msl">handoffs hoje</span><span class="msv">5</span></div>
+    <div class="ms"><span class="msl">tarefas concluídas</span><span class="msv">12</span></div>
+    <div class="ms"><span class="msl">pipelines ativos</span><span class="msv">2</span></div>
+    <div class="ms"><span class="msl">último handoff</span><span class="msv">14min</span></div>
+  </div>
+  <div>
+    <div class="slbl">Projetos</div>
+    <div class="ar active" style="border-color:var(--cyan);background:var(--cyan-dim)"><div style="flex:1"><div class="anm">NEXUS Executor</div><div class="ast">Vercel · multi-agent</div></div><span style="font-size:8px;color:var(--cyan)">50%</span></div>
+    <div class="ar"><div style="flex:1"><div class="anm">CS Agent</div><div class="ast">Health Score · WhatsApp</div></div><span style="font-size:8px;color:var(--green)">85%</span></div>
+    <div class="ar"><div style="flex:1"><div class="anm">Dashboard ACT</div><div class="ast">Meta Ads · relatórios</div></div><span style="font-size:8px;color:var(--gold)">10%</span></div>
+  </div>
+</div>
+
+<!-- CENTER -->
+<div class="ca">
+  <div class="arc">
+    <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
+    <div class="ring r4"></div><div class="ring r5"></div><div class="ring r6"></div>
+    <div class="rip" id="r1"></div><div class="rip" id="r2"></div>
+    <div class="core" id="core" onclick="toggleListen()" title="Clique para falar"><div class="ci"></div></div>
+    <div class="ms-lbl" id="mlbl">CLIQUE PARA FALAR</div>
+  </div>
+  <div class="wf" id="wf">
+    <div class="wb" style="height:4px"></div><div class="wb" style="height:8px"></div>
+    <div class="wb" style="height:14px"></div><div class="wb" style="height:10px"></div>
+    <div class="wb" style="height:6px"></div><div class="wb" style="height:18px"></div>
+    <div class="wb" style="height:10px"></div><div class="wb" style="height:20px"></div>
+    <div class="wb" style="height:12px"></div><div class="wb" style="height:8px"></div>
+    <div class="wb" style="height:22px"></div><div class="wb" style="height:14px"></div>
+    <div class="wb" style="height:10px"></div><div class="wb" style="height:16px"></div>
+    <div class="wb" style="height:8px"></div><div class="wb" style="height:12px"></div>
+    <div class="wb" style="height:6px"></div><div class="wb" style="height:10px"></div>
+    <div class="wb" style="height:14px"></div><div class="wb" style="height:8px"></div>
+  </div>
+  <div class="vc">
+    <button class="bm" id="bmute" onclick="toggleMute()">🔊</button>
+    <button class="bv" id="bmic" onclick="toggleListen()">🎤</button>
+    <button class="bm" onclick="stopAll()">⏹</button>
+  </div>
+  <div class="tra"><div class="trt" id="trt">Pronto para ouvir você, Christyan.</div></div>
+  <div style="display:flex;align-items:center;gap:8px;width:100%;max-width:430px;margin-bottom:6px">
+    <span style="font-size:9px;color:var(--dim);letter-spacing:1px;flex-shrink:0">VOZ</span>
+    <select id="vsel" style="flex:1;background:rgba(0,229,255,0.04);border:1px solid var(--border);border-radius:3px;padding:5px 8px;font-size:10px;color:var(--cyan);font-family:'Share Tech Mono',monospace;outline:none;cursor:pointer"></select>
+  </div>
+  <div class="tir">
+    <input class="ti" id="ti" placeholder="ou digite aqui..." onkeydown="if(event.key==='Enter')typeSubmit()">
+    <button class="ts" onclick="typeSubmit()">ENVIAR</button>
+  </div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="pr">
+  <div class="rtabs">
+    <div class="rtab a" onclick="swtab('tarefas',this)">ClickUp</div>
+    <div class="rtab" onclick="swtab('int',this)">Integrações</div>
+    <div class="rtab" onclick="swtab('tok',this)">Tokens</div>
+  </div>
+
+  <!-- CLICKUP TASKS -->
+  <div class="rcon a" id="rcon-tarefas">
+    <div class="slbl" style="margin-bottom:6px">
+      Em Progresso
+      <span class="cu-count">27</span>
+    </div>
+    <div id="cu-list" style="overflow-y:auto;max-height:calc(100vh - 220px)">
+      <!-- tasks injected by JS -->
+    </div>
+  </div>
+
+  <!-- INTEGRATIONS -->
+  <div class="rcon" id="rcon-int">
+    <div class="slbl">IAs Conectadas</div>
+    <div class="ii on"><span>🧠</span><div style="flex:1"><div class="iin">Claude (Anthropic)</div><div class="iid">claude-sonnet-4-6 · API</div></div><div class="ibg bok">ON</div></div>
+    <div class="ii on"><span>🔍</span><div style="flex:1"><div class="iin">Gemini Pro (Google)</div><div class="iid">gemini-2.5-pro · API</div></div><div class="ibg bok">ON</div></div>
+    <div class="ii pt"><span>⚙️</span><div style="flex:1"><div class="iin">OpenCode</div><div class="iid">local · ~/.config/opencode</div></div><div class="ibg bwn">LOCAL</div></div>
+    <div class="ii pt"><span>🔎</span><div style="flex:1"><div class="iin">Zed / Zcode</div><div class="iid">editor · manual trigger</div></div><div class="ibg bwn">MANUAL</div></div>
+    <div class="slbl" style="margin-top:10px">Plataformas</div>
+    <div class="ii on"><span>✅</span><div style="flex:1"><div class="iin">ClickUp</div><div class="iid">workspace 9011696558 · MCP</div></div><div class="ibg bok">ON</div></div>
+    <div class="ii on"><span>🔄</span><div style="flex:1"><div class="iin">n8n</div><div class="iid">trafegocomcris.app.n8n.cloud</div></div><div class="ibg bok">ON</div></div>
+    <div class="ii on"><span>📊</span><div style="flex:1"><div class="iin">Meta Ads</div><div class="iid">Windsor.ai · MCP</div></div><div class="ibg bok">ON</div></div>
+    <div class="ii on"><span>🗄️</span><div style="flex:1"><div class="iin">Supabase</div><div class="iid">PostgreSQL · MCP</div></div><div class="ibg bok">ON</div></div>
+    <div class="ii off"><span>💬</span><div style="flex:1"><div class="iin">WhatsApp API</div><div class="iid">provider não definido</div></div><div class="ibg bof">OFF</div></div>
+    <div class="ii on"><span>🐙</span><div style="flex:1"><div class="iin">GitHub</div><div class="iid">trafegocomcris-arch</div></div><div class="ibg bok">ON</div></div>
+  </div>
+
+  <!-- TOKENS -->
+  <div class="rcon" id="rcon-tok">
+    <div class="slbl">Consumo Hoje</div>
+    <div class="tc">
+      <div class="th"><div class="tn">🧠 CLAUDE</div><div class="tm">sonnet-4-6</div></div>
+      <div class="tns">
+        <div class="tnv"><div class="tv u" id="ctk">247K</div><div class="tl">TOKENS</div></div>
+        <div class="tnv"><div class="tv">1M</div><div class="tl">LIMITE</div></div>
+        <div class="tnv"><div class="tv c" id="cco">$0.74</div><div class="tl">CUSTO</div></div>
+      </div>
+      <div class="tbt"><div class="tbf" id="bc" style="width:25%;background:linear-gradient(90deg,#00bcd4,#00e5ff);box-shadow:0 0 6px #00e5ff"></div></div>
+      <div class="tsess">8 sessões · média 30K</div>
+    </div>
+    <div class="tc">
+      <div class="th"><div class="tn">🔍 GEMINI</div><div class="tm">2.5-pro</div></div>
+      <div class="tns">
+        <div class="tnv"><div class="tv u" id="gtk" style="color:var(--blue)">89K</div><div class="tl">TOKENS</div></div>
+        <div class="tnv"><div class="tv">1M ctx</div><div class="tl">CONTEXTO</div></div>
+        <div class="tnv"><div class="tv c" id="gco">$0.22</div><div class="tl">CUSTO</div></div>
+      </div>
+      <div class="tbt"><div class="tbf" id="bg" style="width:9%;background:linear-gradient(90deg,#1565c0,#4285f4);box-shadow:0 0 6px #4285f4"></div></div>
+      <div class="tsess">3 sessões · pesquisa</div>
+    </div>
+    <div class="tc">
+      <div class="th"><div class="tn">⚙️ OPENCODE</div><div class="tm">anthropic API</div></div>
+      <div class="tns">
+        <div class="tnv"><div class="tv u" id="otk" style="color:var(--purple)">134K</div><div class="tl">TOKENS</div></div>
+        <div class="tnv"><div class="tv">—</div><div class="tl">LIMITE</div></div>
+        <div class="tnv"><div class="tv c" id="oco">$0.40</div><div class="tl">CUSTO</div></div>
+      </div>
+      <div class="tbt"><div class="tbf" id="bo" style="width:13%;background:linear-gradient(90deg,#6a1b9a,#b388ff);box-shadow:0 0 6px #b388ff"></div></div>
+      <div class="tsess">5 sessões · implementação</div>
+    </div>
+    <div style="padding:8px 9px;border:1px solid rgba(245,177,19,.25);border-radius:3px;background:rgba(245,177,19,.05)">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:10px;color:var(--gold);letter-spacing:1px">TOTAL HOJE</div>
+        <div style="font-family:'Orbitron',monospace;font-size:14px;color:var(--gold);text-shadow:0 0 8px var(--gold)" id="ttot">$1.36</div>
+      </div>
+      <div style="font-size:8px;color:var(--dim);margin-top:4px">470K tokens · 16 sessões · 3 IAs</div>
+      <div style="margin-top:6px">
+        <div style="display:flex;justify-content:space-between;font-size:8px;color:var(--dim);margin-bottom:3px"><span>projeção mensal</span><span style="color:var(--gold)" id="proj">~$40/mês</span></div>
+        <div class="tbt"><div class="tbf" style="width:4%;background:linear-gradient(90deg,#e65100,#F5B113);box-shadow:0 0 6px var(--gold)"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM -->
+<div class="bot">
+  <div class="bfeed">
+    <div class="fh">FEED DE ATIVIDADE EM TEMPO REAL</div>
+    <div class="ft" id="feed">
+      <div class="fl"><span class="fa">CLAUDE</span><span class="ftime">agora</span><span class="ftx">Analisando nexus-executor.js para spec do Vercel deploy...</span></div>
+      <div class="fl"><span class="fa">GEMINI</span><span class="ftime">14min</span><span class="ftx">Handoff → CLAUDE. Vercel KV + Edge Functions. research.md atualizado.</span></div>
+      <div class="fl"><span class="fa">ZCODE</span><span class="ftime">32min</span><span class="ftx">Revisando Health Score Engine. 3 tipos incompletos encontrados.</span></div>
+    </div>
+  </div>
+  <div class="bstats">
+    <div class="bst"><div class="bsv" id="btkn">470K</div><div class="bsl">TOKENS</div></div>
+    <div class="bst"><div class="bsv" id="bcst">$1.36</div><div class="bsl">CUSTO</div></div>
+    <div class="bst"><div class="bsv">27</div><div class="bsl">TAREFAS</div></div>
+    <div class="bst" style="border-right:none">
+      <div class="rad"><div class="rring" style="width:44px;height:44px"></div><div class="rring" style="width:28px;height:28px"></div><div class="rring" style="width:12px;height:12px"></div><div class="rsw"></div></div>
+      <div class="bsl">REDE</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+// ── CLOCK ──
+function clock(){
+  const n=new Date();
+  document.getElementById('clock').textContent=n.toLocaleTimeString('pt-BR',{hour12:false});
+  const D=['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
+  const M=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  document.getElementById('dt').textContent=`${D[n.getDay()]} · ${n.getDate()} ${M[n.getMonth()]} ${n.getFullYear()}`;
+}
+clock();setInterval(clock,1000);
+
+// ── TABS ──
+function swtab(name,el){
+  document.querySelectorAll('.rcon').forEach(t=>t.classList.remove('a'));
+  document.querySelectorAll('.rtab').forEach(t=>t.classList.remove('a'));
+  document.getElementById('rcon-'+name).classList.add('a');
+  el.classList.add('a');
+}
+
+// ── CLICKUP TASKS ──
+const tasks=[
+  {name:"João e Maria Festas",id:"868h9mq2x",url:"https://app.clickup.com/t/868h9mq2x"},
+  {name:"DR JOSE WILTHON",id:"868h5y9p6",url:"https://app.clickup.com/t/868h5y9p6"},
+  {name:"PLASTLIMA ESPERANTINA",id:"868h290gj",url:"https://app.clickup.com/t/868h290gj"},
+  {name:"Fechamento Thais",id:"868hfhz4m",url:"https://app.clickup.com/t/868hfhz4m"},
+  {name:"Criar automação Dr Italo",id:"868hjmcpc",url:"https://app.clickup.com/t/868hjmcpc"},
+  {name:"Reunir Fada MegaHair 15hrs",id:"868hjm6a8",url:"https://app.clickup.com/t/868hjm6a8"},
+  {name:"Adicionar link bio Dra Thaine",id:"868hrkt6p",url:"https://app.clickup.com/t/868hrkt6p"},
+  {name:"Adicionar cartão LIMAS SHOPPING",id:"868j0kdn4",url:"https://app.clickup.com/t/868j0kdn4"},
+  {name:"Compartilhar contas BM COFRE",id:"868j01q5w",url:"https://app.clickup.com/t/868j01q5w"},
+  {name:"Finalizar contrato Dra Livia Serpa",id:"868hu7gf6",url:"https://app.clickup.com/t/868hu7gf6"},
+  {name:"Acessar contas clientes",id:"868hrkyaj",url:"https://app.clickup.com/t/868hrkyaj"},
+  {name:"Enviar relatórios semanais",id:"868j2790c",url:"https://app.clickup.com/t/868j2790c"},
+  {name:"Captação paciente MENTORIA DRA THAINE",id:"868j76yuy",url:"https://app.clickup.com/t/868j76yuy"},
+  {name:"Fechamento Dra Samira",id:"868j6k74y",url:"https://app.clickup.com/t/868j6k74y"},
+  {name:"Verificar página DRA THAINE",id:"868j81aa0",url:"https://app.clickup.com/t/868j81aa0"},
+  {name:"Reunião com Fran",id:"868j7rugk",url:"https://app.clickup.com/t/868j7rugk"},
+  {name:"Subir campanha mentoria Dra Thaine",id:"868ja95jt",url:"https://app.clickup.com/t/868ja95jt"},
+  {name:"Estratégias SEO PUP GEL",id:"868j97mud",url:"https://app.clickup.com/t/868j97mud"},
+  {name:"Criar WORKSPACE PUP GEL",id:"868j97mu9",url:"https://app.clickup.com/t/868j97mu9"},
+  {name:"Treinamento NASA — SAMIRA",id:"868j97mu1",url:"https://app.clickup.com/t/868j97mu1"},
+  {name:"Postagens no TikTok",id:"868j97mtw",url:"https://app.clickup.com/t/868j97mtw"},
+  {name:"Mudar site PUP GEL",id:"868j97mtj",url:"https://app.clickup.com/t/868j97mtj"},
+  {name:"Estruturar Mercado Livre",id:"868j97mtd",url:"https://app.clickup.com/t/868j97mtd"},
+  {name:"Missões PUP GEL",id:"868j97mmb",url:"https://app.clickup.com/t/868j97mmb"},
+  {name:"Criar automação Oral Smile",id:"868jdkyx4",url:"https://app.clickup.com/t/868jdkyx4"},
+  {name:"Criar automação São João",id:"868jdkytk",url:"https://app.clickup.com/t/868jdkytk"},
+  {name:"Adicionar áudios MEL MOURA",id:"868jdgyku",url:"https://app.clickup.com/t/868jdgyku"},
+];
+
+function renderTasks(){
+  const list=document.getElementById('cu-list');
+  list.innerHTML=tasks.map(t=>`
+    <div class="cu-task">
+      <div class="cu-task-name">${t.name}</div>
+      <div style="display:flex;gap:4px;flex-shrink:0">
+        <button class="cu-task-btn" onclick="window.open('${t.url}','_blank')">VER</button>
+        <button class="cu-task-btn" style="background:rgba(245,177,19,0.1);color:var(--gold);border-color:rgba(245,177,19,0.3)" onclick="askNexus('${t.name}')">AJUDA</button>
+      </div>
+    </div>`).join('');
+}
+renderTasks();
+
+function askNexus(taskName){
+  const msg=`Me ajude com a tarefa: ${taskName}`;
+  setTrt('→ '+msg,'us');
+  processCmd(msg);
+  swtab('tarefas',document.querySelector('.rtab'));
+}
+
+// ── NOTIF ──
+function notif(txt,dur=3500){
+  const e=document.getElementById('notif');
+  document.getElementById('ntxt').textContent=txt;
+  e.classList.add('show');
+  setTimeout(()=>e.classList.remove('show'),dur);
+}
+
+// ── VOICE ──
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+const syn=window.speechSynthesis;
+let rec=null,isListen=false,isMuted=false;
+let edgeAudio=null;
+
+let detectedVoices=[];
+
+function getVoiceBySelection(){
+  const voices=window.speechSynthesis.getVoices();
+  if(selVoice==='auto'||selVoice===''){
+    // Auto: melhor voz masculina pt-BR disponível
+    return voices.find(v=>v.name.includes('Antonio'))||
+           voices.find(v=>v.name.includes('Daniel'))||
+           voices.find(v=>v.name.includes('Eddy'))||
+           voices.find(v=>v.lang==='pt-BR')||
+           voices.find(v=>v.lang.startsWith('pt'))||
+           null;
+  }
+  return voices.find(v=>v.name===selVoice)||null;
+}
+
+  const wanted=[
+    {label:'Fernanda (aprimorada)',match:'Fernanda'},
+    {label:'Luciana (aprimorada)',match:'Luciana'},
+    {label:'Felipe (aprimorada)',match:'Felipe'},
+    {label:'Rocko',match:'Rocko'},
+  ];
+  el.innerHTML='';
+  wanted.forEach(w=>{
+    const v=voices.find(x=>x.name.includes(w.match)&&x.lang==='pt-BR');
+    const r=voices.find(x=>x.name.includes(w.match));
+    const found=v||r;
+    const o=document.createElement('option');
+    o.value=found?found.name:'_'+w.match;
+    o.textContent=found?w.label:w.label+' (instalar)';
+    if(!found)o.disabled=true;
+    el.appendChild(o);
+  });
+  el.onchange=()=>{
+    selVoice=el.value;
+    notif('Voz: '+el.options[el.selectedIndex].text);
+  };
+}
+  const wanted=[
+    {label:'Fernanda (aprimorada)',match:'Fernanda'},
+    {label:'Luciana (aprimorada)',match:'Luciana'},
+    {label:'Felipe (aprimorada)',match:'Felipe'},
+    {label:'Rocko',match:'Rocko'},
+  ];
+  el.innerHTML='';
+  wanted.forEach(w=>{
+    const v=voices.find(x=>x.name.includes(w.match));
+    const o=document.createElement('option');
+    o.value=v?v.name:'_'+w.match;
+    o.textContent=v?w.label:w.label+' (instalar)';
+    if(!v)o.disabled=true;
+    el.appendChild(o);
+  });
+  el.onchange=()=>{
+    selVoice=el.value;
+    const pick=window.speechSynthesis.getVoices().find(v=>v.name===selVoice);
+    notif('Voz: '+(pick?pick.name:'?'));
+  };
+}
+  const wanted=[
+    {label:'Fernanda (aprimorada)',match:'Fernanda'},
+    {label:'Luciana (aprimorada)',match:'Luciana'},
+    {label:'Felipe (aprimorada)',match:'Felipe'},
+    {label:'Rocko',match:'Rocko'},
+  ];
+  el.innerHTML='<option value="auto">Auto</option>';
+  wanted.forEach(w=>{
+    const v=voices.find(x=>x.name.includes(w.match));
+    const o=document.createElement('option');
+    o.value=v?v.name:'_'+w.match;
+    o.textContent=v?w.label:w.label+' (instalar)';
+    if(!v)o.disabled=true;
+    el.appendChild(o);
+  });
+  el.onchange=()=>{
+    selVoice=el.value;
+    const pick=window.speechSynthesis.getVoices().find(v=>v.name===selVoice);
+    notif('Voz: '+(pick?pick.name:'Auto'));
+  };
+}
+  
+  // Apenas as 4 vozes desejadas
+  const wanted=[
+    {label:'Fernanda (aprimorada)', match:'Fernanda'},
+    {label:'Luciana (aprimorada)',  match:'Luciana'},
+    {label:'Felipe (aprimorada)',   match:'Felipe'},
+    {label:'Rocko',                 match:'Rocko'},
+  ];
+  
+  el.innerHTML='<option value="auto">🤖 Auto</option>';
+  
+  wanted.forEach(w=>{
+    const voice=voices.find(v=>v.name.includes(w.match));
+    const o=document.createElement('option');
+    if(voice){
+      o.value=voice.name;
+      o.textContent=w.label;
+    } else {
+      o.value='__'+w.match;
+      o.textContent=w.label+' (instalar)';
+      o.disabled=true;
+    }
+    if(voice&&voice.name===selVoice)o.selected=true;
+    el.appendChild(o);
+  });
+  
+  el.onchange=()=>{
+    selVoice=el.value;
+    const voices=window.speechSynthesis.getVoices();
+    const pick=voices.find(v=>v.name===selVoice);
+    notif('Voz: '+(pick?pick.name:'Auto'));
+  };
+}
+
+
+function getVoiceBySelection(){
+  const voices=window.speechSynthesis.getVoices();
+  if(selVoice==='auto'||selVoice===''){
+    // Auto: melhor voz masculina pt-BR disponível
+    return voices.find(v=>v.name.includes('Antonio'))||
+           voices.find(v=>v.name.includes('Daniel'))||
+           voices.find(v=>v.name.includes('Eddy'))||
+           voices.find(v=>v.lang==='pt-BR')||
+           voices.find(v=>v.lang.startsWith('pt'))||
+           null;
+  }
+  return voices.find(v=>v.name===selVoice)||null;
+}
+
+  const wanted=[
+    {label:'Fernanda (aprimorada)',match:'Fernanda'},
+    {label:'Luciana (aprimorada)',match:'Luciana'},
+    {label:'Felipe (aprimorada)',match:'Felipe'},
+    {label:'Rocko',match:'Rocko'},
+  ];
+  el.innerHTML='';
+  wanted.forEach(w=>{
+    const v=voices.find(x=>x.name.includes(w.match)&&x.lang==='pt-BR');
+    const r=voices.find(x=>x.name.includes(w.match));
+    const found=v||r;
+    const o=document.createElement('option');
+    o.value=found?found.name:'_'+w.match;
+    o.textContent=found?w.label:w.label+' (instalar)';
+    if(!found)o.disabled=true;
+    el.appendChild(o);
+  });
+  el.onchange=()=>{
+    selVoice=el.value;
+    notif('Voz: '+el.options[el.selectedIndex].text);
+  };
+}
+  const wanted=[
+    {label:'Fernanda (aprimorada)',match:'Fernanda'},
+    {label:'Luciana (aprimorada)',match:'Luciana'},
+    {label:'Felipe (aprimorada)',match:'Felipe'},
+    {label:'Rocko',match:'Rocko'},
+  ];
+  el.innerHTML='';
+  wanted.forEach(w=>{
+    const v=voices.find(x=>x.name.includes(w.match));
+    const o=document.createElement('option');
+    o.value=v?v.name:'_'+w.match;
+    o.textContent=v?w.label:w.label+' (instalar)';
+    if(!v)o.disabled=true;
+    el.appendChild(o);
+  });
+  el.onchange=()=>{
+    selVoice=el.value;
+    const pick=window.speechSynthesis.getVoices().find(v=>v.name===selVoice);
+    notif('Voz: '+(pick?pick.name:'?'));
+  };
+}
+  const wanted=[
+    {label:'Fernanda (aprimorada)',match:'Fernanda'},
+    {label:'Luciana (aprimorada)',match:'Luciana'},
+    {label:'Felipe (aprimorada)',match:'Felipe'},
+    {label:'Rocko',match:'Rocko'},
+  ];
+  el.innerHTML='<option value="auto">Auto</option>';
+  wanted.forEach(w=>{
+    const v=voices.find(x=>x.name.includes(w.match));
+    const o=document.createElement('option');
+    o.value=v?v.name:'_'+w.match;
+    o.textContent=v?w.label:w.label+' (instalar)';
+    if(!v)o.disabled=true;
+    el.appendChild(o);
+  });
+  el.onchange=()=>{
+    selVoice=el.value;
+    const pick=window.speechSynthesis.getVoices().find(v=>v.name===selVoice);
+    notif('Voz: '+(pick?pick.name:'Auto'));
+  };
+}
+  
+  el.innerHTML='<option value="auto">🤖 Auto (melhor disponível)</option>';
+  
+  // Adiciona todas as vozes pt-BR primeiro, depois en-US
+  const ptVoices=voices.filter(v=>v.lang.startsWith('pt'));
+  const enVoices=voices.filter(v=>v.lang.startsWith('en'));
+  const others=voices.filter(v=>!v.lang.startsWith('pt')&&!v.lang.startsWith('en'));
+  
+  if(ptVoices.length){
+    const grp=document.createElement('optgroup');
+    grp.label='Português';
+    ptVoices.forEach(v=>{
+      const o=document.createElement('option');
+      o.value=v.name;
+      o.textContent=v.name+' ('+v.lang+')';
+      if(v.name===selVoice)o.selected=true;
+      grp.appendChild(o);
+    });
+    el.appendChild(grp);
+  }
+  
+  if(enVoices.length){
+    const grp=document.createElement('optgroup');
+    grp.label='English';
+    enVoices.forEach(v=>{
+      const o=document.createElement('option');
+      o.value=v.name;
+      o.textContent=v.name+' ('+v.lang+')';
+      if(v.name===selVoice)o.selected=true;
+      grp.appendChild(o);
+    });
+    el.appendChild(grp);
+  }
+  
+  el.onchange=()=>{
+    selVoice=el.value;
+    const pick=getVoiceBySelection();
+    notif('Voz: '+(pick?pick.name:'Auto'));
+  };
+  
+  console.log('Vozes carregadas:',voices.length,'| pt-BR:',ptVoices.length);
+}
+
+// Seletor de vozes
+let selVoice='';
+
+function buildVoiceSelector(){
+  const el=document.getElementById('vsel');
+  if(!el)return;
+  const voices=window.speechSynthesis.getVoices();
+  if(!voices.length){
+    window.speechSynthesis.onvoiceschanged=()=>buildVoiceSelector();
+    return;
+  }
+  const wanted=[
+    {label:'Fernanda (aprimorada)',match:'Fernanda'},
+    {label:'Luciana (aprimorada)',match:'Luciana'},
+    {label:'Felipe (aprimorada)',match:'Felipe'},
+    {label:'Rocko',match:'Rocko'},
+  ];
+  el.innerHTML='';
+  let first=true;
+  wanted.forEach(w=>{
+    const v=voices.find(x=>x.name.includes(w.match));
+    const o=document.createElement('option');
+    o.value=v?v.name:'_'+w.match;
+    o.textContent=v?w.label:w.label+' (instalar)';
+    if(!v)o.disabled=true;
+    if(v&&first){o.selected=true;selVoice=v.name;first=false;}
+    el.appendChild(o);
+  });
+  el.onchange=()=>{
+    selVoice=el.value;
+    notif('Voz: '+el.options[el.selectedIndex].text);
+  };
+}
+
+if(SR){
+  rec=new SR();rec.lang='pt-BR';rec.interimResults=true;rec.continuous=false;
+  rec.onstart=()=>{isListen=true;setListenUI(true);};
+  rec.onresult=(e)=>{
+    const t=Array.from(e.results).map(r=>r[0].transcript).join('');
+    setTrt('→ '+t,'us');
+    if(e.results[e.results.length-1].isFinal)processCmd(t);
+  };
+  rec.onerror=(e)=>{setListenUI(false);if(e.error!=='no-speech')notif('Erro: '+e.error);};
+  rec.onend=()=>{isListen=false;setListenUI(false);};
+}
+
+function toggleListen(){
+  if(!rec){notif('Use Chrome ou Edge para voz');return;}
+  if(isListen)rec.stop();
+  else{if(syn&&syn.speaking)syn.cancel();rec.start();}
+}
+
+function setListenUI(on){
+  document.getElementById('bmic').classList.toggle('on',on);
+  document.getElementById('r1').classList.toggle('on',on);
+  document.getElementById('r2').classList.toggle('on',on);
+  const ml=document.getElementById('mlbl');
+  ml.textContent=on?'OUVINDO...':'CLIQUE PARA FALAR';
+  ml.className='ms-lbl'+(on?' on':'');
+  animWave(on);
+}
+
+function setTrt(txt,who){
+  const e=document.getElementById('trt');
+  e.textContent=txt;
+  e.className='trt '+(who==='us'?'us':'nx');
+}
+
+async function speakEL(txt){
+  if(isMuted||!txt)return;
+  const syn=window.speechSynthesis;
+  syn.cancel();
+  
+  await new Promise(r=>setTimeout(r,150));
+  
+  const u=new SpeechSynthesisUtterance(txt);
+  u.lang='pt-BR';
+  u.rate=0.9;
+  u.pitch=0.8;
+  u.volume=1;
+  
+  // Espera vozes carregarem se necessário
+  let voices=syn.getVoices();
+  if(!voices.length){
+    await new Promise(r=>{syn.onvoiceschanged=r;setTimeout(r,1000);});
+    voices=syn.getVoices();
+  }
+  
+  const pick=window.speechSynthesis.getVoices().find(v=>v.name===selVoice);
+  if(pick){u.voice=pick;u.lang=pick.lang;u.pitch=0.85;u.rate=0.9;}else{u.lang='pt-BR';u.pitch=0.85;u.rate=0.9;}
+  
+  u.onstart=()=>{
+    const ml=document.getElementById('mlbl');
+    if(ml){ml.textContent='NEXUS FALANDO...';ml.className='ms-lbl sp';}
+    animWaveSp(true);
+  };
+  u.onend=()=>{
+    const ml=document.getElementById('mlbl');
+    if(ml){ml.textContent='CLIQUE PARA FALAR';ml.className='ms-lbl';}
+    animWaveSp(false);
+  };
+  u.onerror=(e)=>{console.error('voz erro:',e.error);animWaveSp(false);};
+  
+  syn.speak(u);
+}
+
+function toggleMute(){
+  isMuted=!isMuted;
+  const b=document.getElementById('bmute');
+  b.textContent=isMuted?'🔇':'🔊';
+  b.classList.toggle('muted',isMuted);
+  if(isMuted&&syn&&syn.speaking)syn.cancel();
+}
+
+function stopAll(){
+  if(rec&&isListen)rec.stop();
+  if(syn&&syn.speaking)syn.cancel();
+  if(edgeAudio){edgeAudio.pause();edgeAudio=null;}
+  animWave(false);animWaveSp(false);
+  const ml=document.getElementById('mlbl');
+  ml.textContent='CLIQUE PARA FALAR';ml.className='ms-lbl';
+}
+
+if(syn)syn.onvoiceschanged=()=>{
+  const vs=syn.getVoices();
+  const pt=vs.filter(v=>v.lang.startsWith('pt'));
+  console.log('Vozes pt-BR:',pt.map(v=>v.name));
+};
+
+// // ── WAVEFORM ──
+let wiv=null;
+const rest=[4,8,14,10,6,18,10,20,12,8,22,14,10,16,8,12,6,10,14,8];
+function animWave(on){
+  const bars=document.querySelectorAll('.wb');
+  if(wiv)clearInterval(wiv);
+  if(on){wiv=setInterval(()=>bars.forEach(b=>{const h=Math.random()*20+2;b.style.height=h+'px';b.classList.toggle('on',h>10);b.style.background='var(--cyan)'}),100);}
+  else{bars.forEach((b,i)=>{b.style.height=(rest[i]||8)+'px';b.classList.remove('on');b.style.background='var(--cyan)'});}
+}
+function animWaveSp(on){
+  const bars=document.querySelectorAll('.wb');
+  if(wiv)clearInterval(wiv);
+  if(on){wiv=setInterval(()=>bars.forEach(b=>{const h=Math.random()*18+4;b.style.height=h+'px';b.style.background='var(--gold)';b.classList.toggle('on',h>10)}),80);}
+  else{bars.forEach(b=>{b.style.background='var(--cyan)';b.classList.remove('on')});animWave(false);}
+}
+
+// ── COMMANDS ──
+const cmds={
+  status:{m:['status','situação','resumo','como tá'],r:()=>`Tudo operacional, Christyan. Claude está planejando, Zcode revisando o Health Score. Você tem 27 tarefas em andamento no ClickUp e 2 pipelines ativos.`},
+  tarefas:{m:['tarefa','clickup','pendente','em progresso'],r:()=>`Você tem 27 tarefas em progresso no ClickUp. As principais são: fechamento da Dra Samira, captação da mentoria Dra Thaine, automação Dr Italo, e as missões do PUP GEL. Quer que eu ajude com alguma?`},
+  tokens:{m:['token','consumo','custo','gasto'],r:()=>`Hoje consumimos 470 mil tokens. Claude usou 247 mil, custando 74 centavos. Gemini usou 89 mil por 22 centavos. Total de 1 dólar e 36 centavos hoje.`},
+  integracoes:{m:['integra','conecta','plataforma'],r:()=>`Tenho 10 integrações ativas. ClickUp, n8n, Meta Ads, Supabase e GitHub estão online. WhatsApp API ainda está offline aguardando definição do provider.`},
+  gemini:{m:['gemini','pesquisa','research'],r:()=>`Gemini concluiu a pesquisa há 14 minutos. O research.md está disponível com recomendações sobre Vercel KV e Edge Functions.`},
+  claude:{m:['claude','spec','plano'],r:()=>`Claude está escrevendo a spec do deploy no Vercel. Estimativa de conclusão em aproximadamente 10 minutos.`},
+  handoff:{m:['handoff','entregou','passou'],r:()=>`Último handoff foi do Gemini para o Claude há 14 minutos. 5 handoffs registrados hoje no git.`},
+  pupgel:{m:['pup gel','pupgel'],r:()=>`Você tem 6 tarefas do PUP GEL em andamento: SEO do site, workspace no ClickUp, treinamento NASA com Samira, TikTok, Mercado Livre e o site comercial. Quer que eu ajude com alguma?`},
+  thaine:{m:['thaine','dra thaine'],r:()=>`3 tarefas relacionadas à Dra Thaine: verificar a página, subir campanha de captação da mentoria, e adicionar link na bio. Por onde quer começar?`},
+};
+const fb=[
+  q=>`Registrado: "${q}". Recomendo acionar o Gemini para pesquisar o contexto antes de planejar. Quer que eu prepare o prompt?`,
+  q=>`Certo, Christyan. Para "${q}" o melhor caminho é definir no AGENT HANDOFF e iniciar pelo Gemini.`,
+  q=>`Entendido. Vou adicionar "${q}" à fila de tarefas. Qual agente você quer acionar primeiro?`,
+];
+
+function processCmd(txt){
+  const l=txt.toLowerCase();
+  let found=null;
+  for(const k of Object.keys(cmds)){if(cmds[k].m.some(w=>l.includes(w))){found=cmds[k];break;}}
+  const resp=found?found.r():fb[Math.floor(Math.random()*fb.length)](txt);
+  setTimeout(()=>{
+    setTrt(resp,'nx');speakEL(resp);
+    addFeed('NEXUS',`Respondeu: "${txt.substring(0,35)}${txt.length>35?'...':''}"`,`var(--gold)`);
+    if(found===cmds.tokens)swtab('tok',document.querySelectorAll('.rtab')[2]);
+    if(found===cmds.integracoes)swtab('int',document.querySelectorAll('.rtab')[1]);
+    if(found===cmds.tarefas)swtab('tarefas',document.querySelector('.rtab'));
+  },400);
+}
+
+function typeSubmit(){
+  const inp=document.getElementById('ti');
+  const v=inp.value.trim();if(!v)return;
+  inp.value='';setTrt('→ '+v,'us');processCmd(v);
+}
+
+// ── FEED ──
+function addFeed(agent,txt,color='var(--cyan)'){
+  const feed=document.getElementById('feed');
+  const now=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  const line=document.createElement('div');
+  line.className='fl';
+  line.innerHTML=`<span class="fa" style="color:${color}">${agent}</span><span class="ftime">${now}</span><span class="ftx">${txt}</span>`;
+  feed.insertBefore(line,feed.firstChild);
+  while(feed.children.length>4)feed.lastChild.remove();
+}
+
+// ── LIVE TOKENS ──
+let tk={c:247000,g:89000,o:134000};
+function updTok(){
+  const fk=n=>n>=1000?Math.round(n/1000)+'K':n;
+  const tot=tk.c+tk.g+tk.o;
+  const cc=(tk.c/1000*.003).toFixed(2);
+  const gc=(tk.g/1000*.00125).toFixed(2);
+  const oc=(tk.o/1000*.003).toFixed(2);
+  const tc=(+cc+ +gc+ +oc).toFixed(2);
+  document.getElementById('ctk').textContent=fk(tk.c);
+  document.getElementById('gtk').textContent=fk(tk.g);
+  document.getElementById('otk').textContent=fk(tk.o);
+  document.getElementById('cco').textContent='$'+cc;
+  document.getElementById('gco').textContent='$'+gc;
+  document.getElementById('oco').textContent='$'+oc;
+  document.getElementById('ttot').textContent='$'+tc;
+  document.getElementById('btkn').textContent=fk(tot);
+  document.getElementById('bcst').textContent='$'+tc;
+  document.getElementById('proj').textContent='~$'+Math.round(+tc*30)+'/mês';
+  document.getElementById('bc').style.width=Math.min(tk.c/10000,100)+'%';
+  document.getElementById('bg').style.width=Math.min(tk.g/10000,100)+'%';
+  document.getElementById('bo').style.width=Math.min(tk.o/10000,100)+'%';
+}
+setInterval(()=>{tk.c+=Math.floor(Math.random()*800+200);tk.g+=Math.floor(Math.random()*100);tk.o+=Math.floor(Math.random()*200);updTok();},8000);
+
+// ── LIVE FEED ──
+const evs=[
+  ()=>addFeed('CLAUDE','Definindo estrutura Edge Functions para serverless...','var(--cyan)'),
+  ()=>addFeed('ZCODE','Tipos corrigidos em healthScore.ts. Edge cases verificados.','var(--green)'),
+  ()=>addFeed('CLAUDE','Spec 70% concluída — integrando Vercel KV...','var(--cyan)'),
+  ()=>addFeed('NEXUS','Monitoramento ativo. 27 tarefas em progresso no ClickUp.','var(--gold)'),
+];
+let ei=0;setInterval(()=>{evs[ei%evs.length]();ei++;},15000);
+
+// ── BOOT ──
+window.addEventListener('load',()=>{
+  buildVoiceSelector();
+  updTok();
+  setTimeout(()=>{
+    notif('NEXUS v2.1 online. 27 tarefas do ClickUp carregadas.',4000);
+    setTimeout(()=>{
+      const msg='NEXUS online, Christyan. Tenho 27 tarefas em progresso no seu ClickUp. Claude está planejando o deploy do NEXUS e Zcode está revisando o Health Score. O que você precisa?';
+      setTrt(msg,'nx');speakEL(msg);
+    },800);
+  },600);
+});
+</script>
+<script>if('serviceWorker'in navigator){window.addEventListener('load',()=>{
+  buildVoiceSelector();navigator.serviceWorker.register('/sw.js').catch(()=>{});});}</script>
+</body>
+</html>
