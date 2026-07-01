@@ -484,23 +484,23 @@ function buildVoiceSelector(){
     syn.onvoiceschanged=()=>buildVoiceSelector();
     return;
   }
-  const wanted=[
-    {label:'Fernanda (Aprimorada)',match:'Fernanda'},
-    {label:'Luciana (Aprimorada)',match:'Luciana'},
-    {label:'Felipe (Aprimorada)',match:'Felipe'},
-    {label:'Rocko',match:'Rocko'},
-  ];
+  // Mostrar apenas vozes pt-BR disponíveis no browser
+  const ptVoices=voices.filter(v=>v.lang.startsWith('pt-BR')||v.lang.startsWith('pt_BR'));
   el.innerHTML='';
   let first=true;
-  wanted.forEach(w=>{
-    const v=voices.find(x=>x.name.toLowerCase().includes(w.match.toLowerCase()));
+  ptVoices.forEach(v=>{
     const o=document.createElement('option');
-    o.value=v?v.name:'_'+w.match;
-    o.textContent=v?w.label:w.label+' (instalar)';
-    if(!v)o.disabled=true;
-    if(v&&first){o.selected=true;selVoice=v.name;first=false;}
+    o.value=v.name;
+    o.textContent=v.name;
+    if(first){o.selected=true;selVoice=v.name;first=false;}
     el.appendChild(o);
   });
+  if(!ptVoices.length){
+    const o=document.createElement('option');
+    o.textContent='Nenhuma voz pt-BR encontrada';
+    o.disabled=true;
+    el.appendChild(o);
+  }
   el.onchange=()=>{selVoice=el.value;};
 }
 
