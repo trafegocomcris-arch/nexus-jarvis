@@ -538,19 +538,25 @@ function setTrt(txt,who){
   e.className='trt '+(who==='us'?'us':'nx');
 }
 
+// Fila de fala para Chrome
+let _speakQueue=[];
+let _speaking=false;
+
 function speakEL(txt){
   if(isMuted||!txt)return;
-  // Chrome: nunca chamar cancel() antes de speak()
-  // Aguardar se ainda falando
-  if(syn.speaking){
-    syn.cancel();
-    setTimeout(()=>speakEL(txt),350);
-    return;
-  }
+  _speakQueue.push(txt);
+  if(!_speaking)_processQueue();
+}
+
+function _processQueue(){
+  if(!_speakQueue.length){_speaking=false;return;}
+  _speaking=true;
+  const txt=_speakQueue.shift();
+  syn.cancel();
   const u=new SpeechSynthesisUtterance(txt);
   u.lang='pt-BR';u.rate=0.9;u.pitch=0.85;u.volume=1;
   const voices=syn.getVoices();
-  const pick=voices.find(v=>v.name===selVoice)||voices.find(v=>v.lang==='pt-BR')||null;
+  const pick=voices.find(v=>v.name===selVoice)||voices.find(v=>v.lang.startsWith('pt-BR'))||null;
   if(pick){u.voice=pick;u.lang=pick.lang;}
   u.onstart=()=>{
     const ml=document.getElementById('mlbl');
@@ -561,19 +567,21 @@ function speakEL(txt){
     const ml=document.getElementById('mlbl');
     if(ml){ml.textContent='CLIQUE PARA FALAR';ml.className='ms-lbl';}
     animWaveSp(false);
+    _speaking=false;
+    _processQueue();
   };
   u.onerror=(e)=>{
-    console.error('voz erro:',e.error);
     animWaveSp(false);
-    // Se cancelado, tentar novamente
-    if(e.error==='canceled'){setTimeout(()=>speakEL(txt),400);}
+    _speaking=false;
+    _processQueue();
   };
-  syn.speak(u);
-  // Chrome keepalive fix
+  // Chrome precisa de delay após cancel
+  setTimeout(()=>syn.speak(u),100);
+  // Keepalive
   const kav=setInterval(()=>{
     if(!syn.speaking){clearInterval(kav);return;}
     if(syn.paused)syn.resume();
-  },250);
+  },200);
 }
 
 function toggleMute(){
