@@ -193,7 +193,21 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
 .rsw{position:absolute;width:50%;height:1px;background:linear-gradient(90deg,transparent,var(--cyan));top:50%;left:50%;transform-origin:left center;animation:rswe 3s linear infinite;box-shadow:0 0 4px var(--cyan)}
 @keyframes rswe{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-.main{grid-template-columns:200px 1fr!important;}</style>
+.main{grid-template-columns:200px 1fr!important;}
+.proj-card{background:rgba(0,229,255,0.03);border:1px solid rgba(0,229,255,0.1);border-radius:4px;margin-bottom:8px;overflow:hidden;cursor:pointer;}
+.proj-header{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-bottom:1px solid rgba(0,229,255,0.08);}
+.proj-name{font-size:9px;color:var(--cyan);letter-spacing:1px;font-weight:600;}
+.proj-stats{display:flex;gap:6px;font-size:8px;}
+.ps-done{color:#00ff88;}.ps-wip{color:#f5b113;}.ps-todo{color:var(--dim);}
+.proj-tasks{display:none;padding:6px 10px;}
+.proj-card.open .proj-tasks{display:block;}
+.proj-task{display:flex;align-items:center;gap:6px;padding:3px 0;border-bottom:1px solid rgba(0,229,255,0.05);font-size:8px;letter-spacing:.5px;}
+.proj-task:last-child{border:none;}
+.pt-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.pt-done{background:#00ff88;}.pt-wip{background:#f5b113;}.pt-todo{background:rgba(0,229,255,0.3);}
+.proj-task a{color:var(--muted);text-decoration:none;flex:1;}
+.proj-task a:hover{color:var(--cyan);}
+</style>
 </head>
 <body>
 <div class="cor ctl"></div><div class="cor ctr"></div>
@@ -291,7 +305,7 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
 <div class="pr">
   <div class="rtabs">
     
-    <div class="rtab a" onclick="swtab('int',this)">Integrações</div>
+    <div class="rtab a" onclick="swtab('proj',this)">Projetos</div><div class="rtab" onclick="swtab('int',this)">Integrações</div>
     <div class="rtab" onclick="swtab('tok',this)">Tokens</div>
   </div>
 
@@ -307,7 +321,105 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
   </div>
 
   <!-- INTEGRATIONS -->
-  <div class="rcon on" id="rcon-int">
+  <div class="rcon on" id="rcon-proj">
+  <div class="slbl">Tarefas por Projeto</div>
+
+  <div class="proj-card" onclick="this.classList.toggle('open')">
+    <div class="proj-header">
+      <span class="proj-name">ACT DIGITAL</span>
+      <span class="proj-stats"><span class="ps-done">✓0</span><span class="ps-wip">⟳5</span><span class="ps-todo">●13</span></span>
+    </div>
+    <div class="proj-tasks">
+      <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="https://app.clickup.com/t/868k7ezx5" target="_blank">ONBOARDING - NOVOS CLIENTES</a></div>
+      <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="https://app.clickup.com/t/868k53m6u" target="_blank">APPS & MELHORIAS COM IA</a></div>
+      <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="https://app.clickup.com/t/868k53z2p" target="_blank">PROSPECÇÃO E REUNIÃO</a></div>
+      <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="https://app.clickup.com/t/868k54680" target="_blank">PENDÊNCIAS CONTÁBEIS</a></div>
+      <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="https://app.clickup.com/t/868k546cx" target="_blank">DIMINUIR PRO-LABORE</a></div>
+      <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="https://app.clickup.com/t/868k7f0dt" target="_blank">SEGREDOS DA TERRA</a></div>
+      <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="https://app.clickup.com/t/868k7f0c4" target="_blank">REFORMA DE CADEIRAS</a></div>
+      <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="https://app.clickup.com/t/868k7f08w" target="_blank">CRIAR FLUXO ONBOARDING</a></div>
+      <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="https://app.clickup.com/t/868k7eqkp" target="_blank">DOCS AGÊNCIA</a></div>
+      <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="https://app.clickup.com/t/868k7eqgh" target="_blank">MELHORIAS INTERNAS</a></div>
+      <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="https://app.clickup.com/t/868k7eqcy" target="_blank">VERIFICAR TODOS OS CLIENTES</a></div>
+      <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="https://app.clickup.com/t/868k541vd" target="_blank">FECHAMENTO: ARUMÁ AÇAÍ</a></div>
+      <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="https://app.clickup.com/t/868k541fp" target="_blank">FECHAMENTO: ACIUM LOBÃO</a></div>
+      <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="https://app.clickup.com/t/868k6cbzt" target="_blank">MUDANÇA DE ENDEREÇO</a></div>
+      <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="https://app.clickup.com/t/868k6cby1" target="_blank">DISTRATO DOS COLABORADORES</a></div>
+    </div>
+  </div>
+
+  <div class="proj-card" onclick="this.classList.toggle('open')">
+    <div class="proj-header">
+      <span class="proj-name">LIMAS SHOPPING</span>
+      <span class="proj-stats"><span class="ps-done">✓0</span><span class="ps-wip">⟳1</span><span class="ps-todo">●0</span></span>
+    </div>
+    <div class="proj-tasks">
+      <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="https://app.clickup.com/t/868k5c7xe" target="_blank">SUBIR CAMPANHA GRUPOS WPP</a></div>
+    </div>
+  </div>
+
+  <div class="proj-card" onclick="this.classList.toggle('open')">
+    <div class="proj-header">
+      <span class="proj-name">DR ANDRÉ MORO</span>
+      <span class="proj-stats"><span class="ps-done">✓0</span><span class="ps-wip">⟳1</span><span class="ps-todo">●0</span></span>
+    </div>
+    <div class="proj-tasks">
+      <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="https://app.clickup.com/t/868k49a2u" target="_blank">REUNIÃO DE ALINHAMENTO</a></div>
+    </div>
+  </div>
+
+  <div class="proj-card" onclick="this.classList.toggle('open')">
+    <div class="proj-header">
+      <span class="proj-name">FADA DO MEGAHAIR</span>
+      <span class="proj-stats"><span class="ps-done">✓0</span><span class="ps-wip">⟳1</span><span class="ps-todo">●0</span></span>
+    </div>
+    <div class="proj-tasks">
+      <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="https://app.clickup.com/t/868k52ay2" target="_blank">COBRANÇA E ALINHAMENTO</a></div>
+    </div>
+  </div>
+
+  <div class="proj-card" onclick="this.classList.toggle('open')">
+    <div class="proj-header">
+      <span class="proj-name">GRACILENE BOUTIQUE</span>
+      <span class="proj-stats"><span class="ps-done">✓1</span><span class="ps-wip">⟳0</span><span class="ps-todo">●0</span></span>
+    </div>
+    <div class="proj-tasks">
+      <div class="proj-task"><div class="pt-dot pt-done"></div><a href="https://app.clickup.com/t/868k7f0md" target="_blank">SUBIR ANÚNCIOS FESTIVAL ABACAXI</a></div>
+    </div>
+  </div>
+
+  <div class="proj-card" onclick="this.classList.toggle('open')">
+    <div class="proj-header">
+      <span class="proj-name">IG IMPORT JUAZEIRO</span>
+      <span class="proj-stats"><span class="ps-done">✓1</span><span class="ps-wip">⟳0</span><span class="ps-todo">●0</span></span>
+    </div>
+    <div class="proj-tasks">
+      <div class="proj-task"><div class="pt-dot pt-done"></div><a href="https://app.clickup.com/t/868k7ey6h" target="_blank">SUBIR NOVOS ANÚNCIOS</a></div>
+    </div>
+  </div>
+
+  <div class="proj-card" onclick="this.classList.toggle('open')">
+    <div class="proj-header">
+      <span class="proj-name">GIIMPORTADOS</span>
+      <span class="proj-stats"><span class="ps-done">✓0</span><span class="ps-wip">⟳0</span><span class="ps-todo">●1</span></span>
+    </div>
+    <div class="proj-tasks">
+      <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="https://app.clickup.com/t/868k4hz4a" target="_blank">CRIAR PLANEJAMENTO + PROPOSTA</a></div>
+    </div>
+  </div>
+
+  <div class="proj-card" onclick="this.classList.toggle('open')">
+    <div class="proj-header">
+      <span class="proj-name">GERAL</span>
+      <span class="proj-stats"><span class="ps-done">✓0</span><span class="ps-wip">⟳2</span><span class="ps-todo">●0</span></span>
+    </div>
+    <div class="proj-tasks">
+      <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="https://app.clickup.com/t/868k529zn" target="_blank">COBRAR PAGAMENTOS</a></div>
+      <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="https://app.clickup.com/t/868k52a9b" target="_blank">PENDÊNCIAS LICITAÇÃO</a></div>
+    </div>
+  </div>
+</div>
+<div class="rcon" id="rcon-int">
     <div class="slbl">IAs Conectadas</div>
     <div class="ii on"><span>🧠</span><div style="flex:1"><div class="iin">Claude (Anthropic)</div><div class="iid">claude-sonnet-4-6 · API</div></div><div class="ibg bok">ON</div></div>
     <div class="ii on"><span>🔍</span><div style="flex:1"><div class="iin">Gemini Pro (Google)</div><div class="iid">gemini-2.5-pro · API</div></div><div class="ibg bok">ON</div></div>
