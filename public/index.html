@@ -485,15 +485,15 @@ function buildVoiceSelector(){
     return;
   }
   const wanted=[
-    {label:'Fernanda (Aprimorada)',match:'Fernanda (Aprimorada)'},
-    {label:'Luciana (Aprimorada)',match:'Luciana (Aprimorada)'},
-    {label:'Felipe (Aprimorada)',match:'Felipe (Aprimorada)'},
+    {label:'Fernanda (Aprimorada)',match:'Fernanda'},
+    {label:'Luciana (Aprimorada)',match:'Luciana'},
+    {label:'Felipe (Aprimorada)',match:'Felipe'},
     {label:'Rocko',match:'Rocko'},
   ];
   el.innerHTML='';
   let first=true;
   wanted.forEach(w=>{
-    const v=voices.find(x=>x.name.includes(w.match));
+    const v=voices.find(x=>x.name.toLowerCase().includes(w.match.toLowerCase()));
     const o=document.createElement('option');
     o.value=v?v.name:'_'+w.match;
     o.textContent=v?w.label:w.label+' (instalar)';
