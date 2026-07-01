@@ -469,6 +469,20 @@ function notif(txt,dur=3500){
   setTimeout(()=>e.classList.remove('show'),dur);
 }
 
+
+// Desbloquear áudio no Chrome no primeiro clique
+let _audioUnlocked=false;
+function unlockAudio(){
+  if(_audioUnlocked)return;
+  _audioUnlocked=true;
+  // Faz uma utterance vazia para desbloquear
+  const u=new SpeechSynthesisUtterance('');
+  u.volume=0;
+  window.speechSynthesis.speak(u);
+  window.speechSynthesis.cancel();
+}
+document.addEventListener('click',unlockAudio,{once:true});
+
 // ── VOICE ──
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 const syn=window.speechSynthesis;
