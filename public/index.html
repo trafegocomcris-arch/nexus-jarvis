@@ -540,10 +540,12 @@ function setTrt(txt,who){
 
 async function speakEL(txt){
   if(isMuted||!txt)return;
-  if(syn&&syn.speaking)syn.cancel();
+  if(syn.speaking)syn.cancel();
+  await new Promise(r=>setTimeout(r,200));
+  // Chrome fix: resume se pausado
+  if(syn.paused)syn.resume();
   const u=new SpeechSynthesisUtterance(txt);
   u.lang='pt-BR';u.rate=0.9;u.pitch=0.85;u.volume=1;
-  await new Promise(r=>setTimeout(r,100));
   const voices=syn.getVoices();
   const pick=voices.find(v=>v.name===selVoice)||voices.find(v=>v.lang==='pt-BR')||null;
   if(pick){u.voice=pick;u.lang=pick.lang;}
@@ -557,8 +559,10 @@ async function speakEL(txt){
     if(ml){ml.textContent='CLIQUE PARA FALAR';ml.className='ms-lbl';}
     animWaveSp(false);
   };
-  u.onerror=(e)=>{animWaveSp(false);};
+  u.onerror=(e)=>{console.error('voz:',e.error);animWaveSp(false);};
   syn.speak(u);
+  // Chrome bug fix: keepalive
+  setTimeout(()=>{if(syn.speaking&&syn.paused)syn.resume();},500);
 }
 
 function toggleMute(){
