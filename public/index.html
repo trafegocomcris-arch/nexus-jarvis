@@ -23,7 +23,7 @@
 body{font-family:'Share Tech Mono',monospace;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;position:relative}
 body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.07) 2px,rgba(0,0,0,0.07) 4px);pointer-events:none;z-index:1000}
 body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
-.layout{position:relative;z-index:10;display:grid;grid-template-columns:230px 1fr 240px;grid-template-rows:48px 1fr 96px;height:100vh}
+.layout{position:relative;z-index:10;display:grid;grid-template-columns:450px 1fr 450px;grid-template-rows:48px 1fr 96px;height:100vh}
 
 /* TOPBAR */
 .topbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--border);background:rgba(0,20,25,0.95)}
@@ -72,7 +72,8 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
 
 /* CENTER */
 .ca{display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;background:radial-gradient(ellipse at center,rgba(0,30,40,0.8) 0%,var(--bg) 70%)}
-.arc{position:relative;width:290px;height:290px;flex-shrink:0}
+.arc{position:relative;width:320px;height:320px;flex-shrink:0}
+#nexus-3d{width:320px;height:320px;display:block;cursor:pointer;}
 .ring{position:absolute;border-radius:50%;border-style:solid;top:50%;left:50%;transform:translate(-50%,-50%)}
 .r1{width:290px;height:290px;border:1px solid rgba(0,229,255,0.1);animation:rs 30s linear infinite reverse}
 .r2{width:256px;height:256px;border:1px solid rgba(0,229,255,0.18);animation:rs 20s linear infinite}
@@ -235,9 +236,9 @@ body{background:var(--c3-bg)!important;background-image:linear-gradient(var(--c3
 .hcl{color:var(--c3-cyan)!important;font-size:13px!important;font-weight:300!important;font-variant-numeric:tabular-nums;}
 
 /* Barras laterais — aumentar 50% */
-.lbar{width:300px!important;background:rgba(0,4,10,0.9)!important;border-right:1px solid var(--c3-border)!important;}
-.pr{width:300px!important;background:rgba(0,4,10,0.9)!important;border-left:1px solid var(--c3-border)!important;}
-.main{grid-template-columns:300px 1fr 300px!important;}
+.lbar{width:450px!important;background:rgba(0,4,10,0.9)!important;border-right:1px solid var(--c3-border)!important;}
+.pr{width:450px!important;background:rgba(0,4,10,0.9)!important;border-left:1px solid var(--c3-border)!important;}
+.main{grid-template-columns:450px 1fr 450px!important;}
 
 /* Seções da lateral */
 .slbl{font-size:9px!important;color:var(--c3-text-dim)!important;letter-spacing:3px!important;border-bottom:1px solid var(--c3-border)!important;padding-bottom:6px!important;margin-bottom:8px!important;}
@@ -336,6 +337,34 @@ body{background:var(--c3-bg)!important;background-image:linear-gradient(var(--c3
 .wv rect{fill:var(--c3-cyan)!important;opacity:0.4!important;}
 
 /* Arcos do reator já são SVG, manter estilo original */
+
+/* === TIPOGRAFIA MELHORADA === */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&family=JetBrains+Mono:wght@300;400&display=swap');
+body{font-family:'Space Grotesk',sans-serif!important;}
+code,pre,.hcl,.stv,.tv,.ft{font-family:'JetBrains Mono','Share Tech Mono',monospace!important;}
+.an{font-size:12px!important;font-weight:500!important;letter-spacing:1.5px!important;}
+.as{font-size:11px!important;letter-spacing:.5px!important;}
+.slbl{font-size:10px!important;letter-spacing:2.5px!important;font-weight:400!important;}
+.pbl{font-size:11px!important;letter-spacing:.5px!important;}
+.pbv{font-size:12px!important;font-weight:500!important;}
+.stl{font-size:11px!important;letter-spacing:.5px!important;}
+.stv{font-size:14px!important;font-weight:400!important;}
+.proj-name{font-size:11px!important;letter-spacing:1.5px!important;font-weight:500!important;}
+.proj-task a{font-size:11px!important;letter-spacing:.3px!important;}
+.iin{font-size:11px!important;letter-spacing:.5px!important;}
+.iid{font-size:10px!important;}
+.tn{font-size:11px!important;letter-spacing:.5px!important;}
+.tv{font-size:16px!important;font-weight:300!important;}
+.tl{font-size:10px!important;letter-spacing:.5px!important;}
+.trt{font-size:13px!important;line-height:1.7!important;letter-spacing:.2px!important;}
+.ms-lbl{font-size:11px!important;letter-spacing:3px!important;}
+.hcl{font-size:15px!important;font-weight:300!important;}
+.ft{font-size:14px!important;}
+.fe{font-size:11px!important;}
+.rtab{font-size:10px!important;letter-spacing:1.5px!important;}
+.anm{font-size:12px!important;font-weight:500!important;letter-spacing:.5px!important;}
+.ast{font-size:10px!important;letter-spacing:.3px!important;}
+
 </style>
 
 </style>
@@ -397,12 +426,10 @@ body{background:var(--c3-bg)!important;background-image:linear-gradient(var(--c3
 
 <!-- CENTER -->
 <div class="ca">
-  <div class="arc">
-    <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
-    <div class="ring r4"></div><div class="ring r5"></div><div class="ring r6"></div>
+  <div class="arc" style="position:relative;display:flex;align-items:center;justify-content:center;">
+    <canvas id="nexus-3d" onclick="toggleListen()" title="Clique para falar"></canvas>
     <div class="rip" id="r1"></div><div class="rip" id="r2"></div>
-    <div class="core" id="core" onclick="toggleListen()" title="Clique para falar"><div class="ci"></div></div>
-    <div class="ms-lbl" id="mlbl">CLIQUE PARA FALAR</div>
+    <div class="ms-lbl" id="mlbl" style="position:absolute;bottom:-28px;left:50%;transform:translateX(-50%);white-space:nowrap;">CLIQUE PARA FALAR</div>
   </div>
   <div class="wf" id="wf">
     <div class="wb" style="height:4px"></div><div class="wb" style="height:8px"></div>
@@ -569,7 +596,7 @@ body{background:var(--c3-bg)!important;background-image:linear-gradient(var(--c3
   <div class="rcon" id="rcon-tok">
     <div class="slbl">Consumo Hoje</div>
     <div class="tc">
-      <div class="th"><div class="tn">🧠 CLAUDE</div><div class="tm">sonnet-4-6</div></div>
+      <div class="th"><div class="tn">CLAUDE</div><div class="tm">sonnet-4-6</div></div>
       <div class="tns">
         <div class="tnv"><div class="tv u" id="ctk">247K</div><div class="tl">TOKENS</div></div>
         <div class="tnv"><div class="tv">1M</div><div class="tl">LIMITE</div></div>
@@ -579,7 +606,7 @@ body{background:var(--c3-bg)!important;background-image:linear-gradient(var(--c3
       <div class="tsess">8 sessões · média 30K</div>
     </div>
     <div class="tc">
-      <div class="th"><div class="tn">🔍 GEMINI</div><div class="tm">2.5-pro</div></div>
+      <div class="th"><div class="tn">GEMINI</div><div class="tm">2.5-pro</div></div>
       <div class="tns">
         <div class="tnv"><div class="tv u" id="gtk" style="color:var(--blue)">89K</div><div class="tl">TOKENS</div></div>
         <div class="tnv"><div class="tv">1M ctx</div><div class="tl">CONTEXTO</div></div>
@@ -589,7 +616,7 @@ body{background:var(--c3-bg)!important;background-image:linear-gradient(var(--c3
       <div class="tsess">3 sessões · pesquisa</div>
     </div>
     <div class="tc">
-      <div class="th"><div class="tn">⚙️ OPENCODE</div><div class="tm">anthropic API</div></div>
+      <div class="th"><div class="tn">OPENCODE</div><div class="tm">anthropic API</div></div>
       <div class="tns">
         <div class="tnv"><div class="tv u" id="otk" style="color:var(--purple)">134K</div><div class="tl">TOKENS</div></div>
         <div class="tnv"><div class="tv">—</div><div class="tl">LIMITE</div></div>
@@ -939,5 +966,161 @@ window.addEventListener('load',()=>{
 </script>
 <script>if('serviceWorker'in navigator){window.addEventListener('load',()=>{
   buildVoiceSelector();navigator.serviceWorker.register('/sw.js').catch(()=>{});});}</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  const canvas = document.getElementById('nexus-3d');
+  if(!canvas) return;
+
+  const W = 320, H = 320;
+  canvas.width = W; canvas.height = H;
+
+  const renderer = new THREE.WebGLRenderer({canvas, alpha:true, antialias:true});
+  renderer.setSize(W, H);
+  renderer.setPixelRatio(window.devicePixelRatio||1);
+  renderer.setClearColor(0x000000, 0);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, W/H, 0.1, 1000);
+  camera.position.set(0, 0, 5);
+
+  const C = 0x00C8FF;
+  const G = 0x00FF88;
+
+  // Criar anéis orbitais em 3D
+  function makeRing(r, tube, color, opacity, tiltX, tiltZ){
+    const geo = new THREE.TorusGeometry(r, tube, 8, 80);
+    const mat = new THREE.MeshBasicMaterial({color, transparent:true, opacity});
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.rotation.x = tiltX;
+    mesh.rotation.z = tiltZ;
+    return mesh;
+  }
+
+  const rings = [
+    makeRing(2.0, 0.008, C, 0.12, 0, 0),
+    makeRing(1.7, 0.010, C, 0.18, 0.3, 0.1),
+    makeRing(1.4, 0.012, C, 0.28, -0.2, 0.4),
+    makeRing(1.1, 0.010, C, 0.38, 0.8, -0.2),
+    makeRing(0.8, 0.012, C, 0.50, -0.5, 0.7),
+    makeRing(0.5, 0.008, C, 0.60, 1.2, 0.3),
+  ];
+
+  rings.forEach(r => scene.add(r));
+
+  // Esfera central — núcleo
+  const coreGeo = new THREE.SphereGeometry(0.22, 32, 32);
+  const coreMat = new THREE.MeshBasicMaterial({color:0xffffff, transparent:true, opacity:0.95});
+  const core = new THREE.Mesh(coreGeo, coreMat);
+  scene.add(core);
+
+  // Halo do núcleo
+  const haloGeo = new THREE.SphereGeometry(0.32, 32, 32);
+  const haloMat = new THREE.MeshBasicMaterial({color:C, transparent:true, opacity:0.12, side:THREE.BackSide});
+  const halo = new THREE.Mesh(haloGeo, haloMat);
+  scene.add(halo);
+
+  // Partículas orbitando
+  const ptGeo = new THREE.BufferGeometry();
+  const ptCount = 80;
+  const ptPos = new Float32Array(ptCount * 3);
+  const ptAngles = [];
+  const ptRadii = [];
+  const ptSpeeds = [];
+  const ptTilts = [];
+
+  for(let i = 0; i < ptCount; i++){
+    const angle = Math.random() * Math.PI * 2;
+    const r = 0.4 + Math.random() * 1.7;
+    const tiltX = (Math.random() - 0.5) * Math.PI;
+    const tiltZ = (Math.random() - 0.5) * Math.PI;
+    ptAngles.push(angle);
+    ptRadii.push(r);
+    ptSpeeds.push(0.003 + Math.random() * 0.008);
+    ptTilts.push({x: tiltX, z: tiltZ});
+    ptPos[i*3] = r * Math.cos(angle);
+    ptPos[i*3+1] = r * Math.sin(angle) * 0.3;
+    ptPos[i*3+2] = r * Math.sin(angle);
+  }
+
+  ptGeo.setAttribute('position', new THREE.BufferAttribute(ptPos, 3));
+  const ptMat = new THREE.PointsMaterial({color:C, size:0.04, transparent:true, opacity:0.7});
+  const particles = new THREE.Points(ptGeo, ptMat);
+  scene.add(particles);
+
+  // Velocidades de rotação dos anéis
+  const rotSpeeds = [0.002, -0.003, 0.005, -0.004, 0.007, -0.006];
+  const rotAxes = ['y','x','z','y','x','z'];
+
+  let frame = 0;
+  let listening = false;
+  let pulse = 0;
+
+  function animate(){
+    requestAnimationFrame(animate);
+    frame++;
+
+    // Verificar estado de escuta
+    const isL = window.isListen || false;
+    if(isL !== listening){
+      listening = isL;
+    }
+
+    // Rotação dos anéis
+    rings.forEach((ring, i) => {
+      const ax = rotAxes[i];
+      ring.rotation[ax] += rotSpeeds[i] * (listening ? 3 : 1);
+    });
+
+    // Pulso do núcleo quando ouvindo
+    if(listening){
+      pulse += 0.1;
+      const s = 1 + Math.sin(pulse) * 0.15;
+      core.scale.set(s, s, s);
+      halo.scale.set(s * 1.2, s * 1.2, s * 1.2);
+      coreMat.opacity = 0.7 + Math.sin(pulse) * 0.3;
+    } else {
+      const s = 1 + Math.sin(frame * 0.02) * 0.05;
+      core.scale.set(s, s, s);
+      halo.scale.set(1.2, 1.2, 1.2);
+      coreMat.opacity = 0.95;
+    }
+
+    // Atualizar partículas
+    const pos = ptGeo.attributes.position.array;
+    for(let i = 0; i < ptCount; i++){
+      ptAngles[i] += ptSpeeds[i] * (listening ? 2.5 : 1);
+      const a = ptAngles[i];
+      const r = ptRadii[i];
+      const tx = ptTilts[i].x;
+      const tz = ptTilts[i].z;
+      pos[i*3]   = r * Math.cos(a) * Math.cos(tz) - r * Math.sin(a) * 0.3 * Math.sin(tz);
+      pos[i*3+1] = r * Math.cos(a) * Math.sin(tx) * 0.5 + r * Math.sin(a) * 0.3 * Math.cos(tx);
+      pos[i*3+2] = r * Math.sin(a) * Math.cos(tx);
+    }
+    ptGeo.attributes.position.needsUpdate = true;
+    ptMat.opacity = listening ? 0.9 : 0.55 + Math.sin(frame * 0.03) * 0.15;
+
+    // Rotação suave da cena toda
+    scene.rotation.y = Math.sin(frame * 0.005) * 0.3;
+
+    renderer.render(scene, camera);
+  }
+
+  animate();
+
+  // Interação de clique — pulso visual
+  canvas.addEventListener('click', ()=>{
+    pulse = 0;
+    rings.forEach(r => {
+      r.material.opacity = Math.min(r.material.opacity * 2, 1);
+      setTimeout(() => { r.material.opacity /= 2; }, 300);
+    });
+  });
+
+})();
+</script>
+
 </body>
 </html>
