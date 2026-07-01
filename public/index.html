@@ -207,6 +207,137 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
 .pt-done{background:#00ff88;}.pt-wip{background:#f5b113;}.pt-todo{background:rgba(0,229,255,0.3);}
 .proj-task a{color:var(--muted);text-decoration:none;flex:1;}
 .proj-task a:hover{color:var(--cyan);}
+
+/* === CONCEITO 3: FUTURISTA DEEP SPACE === */
+:root{
+  --c3-bg:#00040A;
+  --c3-cyan:#00C8FF;
+  --c3-cyan-dim:rgba(0,200,255,0.15);
+  --c3-cyan-mid:rgba(0,200,255,0.35);
+  --c3-green:#00FF88;
+  --c3-border:rgba(0,200,255,0.1);
+  --c3-border-strong:rgba(0,200,255,0.2);
+  --c3-text:rgba(0,200,255,0.8);
+  --c3-text-dim:rgba(0,200,255,0.4);
+  --c3-grid:rgba(0,200,255,0.025);
+}
+
+body{background:var(--c3-bg)!important;background-image:linear-gradient(var(--c3-grid) 1px,transparent 1px),linear-gradient(90deg,var(--c3-grid) 1px,transparent 1px)!important;background-size:32px 32px!important;}
+
+/* Header */
+.hd{background:rgba(0,4,10,0.95)!important;border-bottom:1px solid var(--c3-border)!important;}
+.hl{color:var(--c3-cyan)!important;letter-spacing:6px!important;font-size:13px!important;font-weight:300!important;}
+.hv{color:var(--c3-text-dim)!important;border:1px solid var(--c3-border)!important;font-size:9px!important;}
+.hst{color:var(--c3-text-dim)!important;font-size:9px!important;}
+.hst .on{color:var(--c3-green)!important;}
+.ht{color:var(--c3-text-dim)!important;font-size:11px!important;}
+.ht .sep{color:var(--c3-border-strong)!important;}
+.hcl{color:var(--c3-cyan)!important;font-size:13px!important;font-weight:300!important;font-variant-numeric:tabular-nums;}
+
+/* Barras laterais — aumentar 50% */
+.lbar{width:300px!important;background:rgba(0,4,10,0.9)!important;border-right:1px solid var(--c3-border)!important;}
+.pr{width:300px!important;background:rgba(0,4,10,0.9)!important;border-left:1px solid var(--c3-border)!important;}
+.main{grid-template-columns:300px 1fr 300px!important;}
+
+/* Seções da lateral */
+.slbl{font-size:9px!important;color:var(--c3-text-dim)!important;letter-spacing:3px!important;border-bottom:1px solid var(--c3-border)!important;padding-bottom:6px!important;margin-bottom:8px!important;}
+.slbl::before{content:'// ';}
+
+/* Agentes */
+.ag{background:rgba(0,200,255,0.02)!important;border:1px solid var(--c3-border)!important;border-radius:2px!important;margin-bottom:4px!important;padding:8px 10px!important;}
+.ag:hover{border-color:var(--c3-border-strong)!important;background:rgba(0,200,255,0.04)!important;}
+.an{font-size:11px!important;color:var(--c3-text)!important;letter-spacing:2px!important;}
+.as{font-size:10px!important;color:var(--c3-text-dim)!important;letter-spacing:1px!important;}
+.ad{width:7px!important;height:7px!important;border-radius:50%!important;}
+
+/* Pipeline */
+.pb{background:rgba(0,200,255,0.06)!important;border-radius:1px!important;}
+.pbf{border-radius:1px!important;}
+.pbl{font-size:10px!important;color:var(--c3-text-dim)!important;letter-spacing:1px!important;}
+.pbv{font-size:10px!important;color:var(--c3-cyan)!important;}
+
+/* Status */
+.stl{font-size:10px!important;color:var(--c3-text-dim)!important;letter-spacing:1px!important;}
+.stv{font-size:11px!important;color:var(--c3-cyan)!important;font-weight:400!important;}
+
+/* Projetos */
+.proj-card{background:rgba(0,200,255,0.02)!important;border:1px solid var(--c3-border)!important;border-radius:2px!important;}
+.proj-card:hover{border-color:var(--c3-border-strong)!important;}
+.proj-name{font-size:10px!important;color:var(--c3-text)!important;letter-spacing:2px!important;}
+.proj-task a{font-size:10px!important;color:var(--c3-text-dim)!important;letter-spacing:.5px!important;}
+.proj-task a:hover{color:var(--c3-cyan)!important;}
+.ps-done{color:var(--c3-green)!important;font-size:9px!important;}
+.ps-wip{color:#F5B113!important;font-size:9px!important;}
+.ps-todo{color:var(--c3-text-dim)!important;font-size:9px!important;}
+
+/* Centro */
+.trt{font-size:12px!important;color:var(--c3-text)!important;letter-spacing:.5px!important;line-height:1.6!important;}
+.ms-lbl{font-size:10px!important;color:var(--c3-text-dim)!important;letter-spacing:4px!important;}
+.ms-lbl.sp{color:var(--c3-cyan)!important;}
+.ms-lbl.on{color:var(--c3-green)!important;}
+
+/* Input */
+.ti{background:rgba(0,200,255,0.03)!important;border:1px solid var(--c3-border)!important;color:var(--c3-text)!important;font-size:11px!important;border-radius:2px!important;letter-spacing:.5px!important;}
+.ti::placeholder{color:var(--c3-text-dim)!important;}
+.ts{background:transparent!important;border:1px solid var(--c3-border-strong)!important;color:var(--c3-cyan)!important;font-size:9px!important;border-radius:2px!important;letter-spacing:3px!important;}
+.ts:hover{background:rgba(0,200,255,0.06)!important;}
+
+/* Abas direitas */
+.rtab{font-size:9px!important;color:var(--c3-text-dim)!important;letter-spacing:2px!important;}
+.rtab.a{color:var(--c3-cyan)!important;border-bottom-color:var(--c3-cyan)!important;}
+.rtabs{border-bottom:1px solid var(--c3-border)!important;background:rgba(0,4,10,0.8)!important;}
+
+/* Integrações */
+.ii{background:rgba(0,200,255,0.02)!important;border:1px solid var(--c3-border)!important;border-radius:2px!important;margin-bottom:4px!important;}
+.iin{font-size:10px!important;color:var(--c3-text)!important;letter-spacing:1px!important;}
+.iid{font-size:9px!important;color:var(--c3-text-dim)!important;}
+.ibg{font-size:8px!important;border-radius:2px!important;letter-spacing:1px!important;padding:2px 6px!important;}
+.ibg.bok{background:rgba(0,255,136,0.1)!important;color:var(--c3-green)!important;border:1px solid rgba(0,255,136,0.2)!important;}
+.ibg.bof{background:rgba(255,255,255,0.04)!important;color:rgba(255,255,255,0.2)!important;border:1px solid rgba(255,255,255,0.08)!important;}
+
+/* Tokens */
+.tc{background:rgba(0,200,255,0.02)!important;border:1px solid var(--c3-border)!important;border-radius:2px!important;}
+.tn{font-size:10px!important;color:var(--c3-text)!important;letter-spacing:1px!important;}
+.tm{font-size:9px!important;color:var(--c3-text-dim)!important;}
+.tv{font-size:13px!important;color:var(--c3-cyan)!important;font-weight:300!important;letter-spacing:1px!important;}
+.tl{font-size:8px!important;color:var(--c3-text-dim)!important;letter-spacing:1px!important;}
+.tbt{background:rgba(0,200,255,0.06)!important;border-radius:1px!important;}
+.tsess{font-size:9px!important;color:var(--c3-text-dim)!important;}
+
+/* Feed */
+.fbar{background:rgba(0,4,10,0.95)!important;border-top:1px solid var(--c3-border)!important;}
+.fl{font-size:9px!important;color:var(--c3-text-dim)!important;letter-spacing:2px!important;}
+.fe{font-size:10px!important;color:var(--c3-text-dim)!important;}
+.fe .fi{font-size:9px!important;letter-spacing:1px!important;}
+.fe .claude .fi{color:var(--c3-cyan)!important;}
+.fe .gemini .fi{color:#4285f4!important;}
+.fe .zcode .fi{color:#b388ff!important;}
+.fe .nexus .fi{color:var(--c3-green)!important;}
+.ft{font-size:12px!important;color:var(--c3-cyan)!important;font-weight:300!important;}
+.ft .sep{color:var(--c3-border-strong)!important;}
+
+/* Botões voz */
+.bv{background:rgba(0,200,255,0.03)!important;border:1px solid var(--c3-border)!important;border-radius:2px!important;color:var(--c3-text-dim)!important;font-size:14px!important;}
+.bv:hover{background:rgba(0,200,255,0.08)!important;border-color:var(--c3-border-strong)!important;}
+.bv.on{background:rgba(0,200,255,0.1)!important;border-color:var(--c3-cyan)!important;color:var(--c3-cyan)!important;}
+.bv.muted{color:rgba(255,100,100,0.6)!important;}
+
+/* Seletor de voz */
+#vsel{font-size:10px!important;color:var(--c3-text)!important;background:rgba(0,200,255,0.03)!important;border:1px solid var(--c3-border)!important;border-radius:2px!important;letter-spacing:.5px!important;}
+
+/* Notificações */
+.notif{background:rgba(0,4,10,0.95)!important;border:1px solid var(--c3-border-strong)!important;color:var(--c3-cyan)!important;font-size:10px!important;letter-spacing:1px!important;border-radius:2px!important;}
+
+/* Projetos tarefas */
+.proj-header{border-bottom:1px solid var(--c3-border)!important;}
+.proj-tasks{background:rgba(0,200,255,0.01)!important;}
+
+/* Waveform */
+.wv rect{fill:var(--c3-cyan)!important;opacity:0.4!important;}
+
+/* Arcos do reator já são SVG, manter estilo original */
+</style>
+
 </style>
 </head>
 <body>
