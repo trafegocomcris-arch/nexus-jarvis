@@ -469,53 +469,280 @@ function notif(txt,dur=3500){
   setTimeout(()=>e.classList.remove('show'),dur);
 }
 
-
-// Desbloquear áudio no Chrome no primeiro clique
-let _audioUnlocked=false;
-function unlockAudio(){
-  if(_audioUnlocked)return;
-  _audioUnlocked=true;
-  // Faz uma utterance vazia para desbloquear
-  const u=new SpeechSynthesisUtterance('');
-  u.volume=0;
-  window.speechSynthesis.speak(u);
-  window.speechSynthesis.cancel();
-}
-document.addEventListener('click',unlockAudio,{once:true});
-
 // ── VOICE ──
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 const syn=window.speechSynthesis;
 let rec=null,isListen=false,isMuted=false;
 let edgeAudio=null;
+
+let detectedVoices=[];
+
+function getVoiceBySelection(){
+  const voices=window.speechSynthesis.getVoices();
+  if(selVoice==='auto'||selVoice===''){
+    // Auto: melhor voz masculina pt-BR disponível
+    return voices.find(v=>v.name.includes('Antonio'))||
+           voices.find(v=>v.name.includes('Daniel'))||
+           voices.find(v=>v.name.includes('Eddy'))||
+           voices.find(v=>v.lang==='pt-BR')||
+           voices.find(v=>v.lang.startsWith('pt'))||
+           null;
+  }
+  return voices.find(v=>v.name===selVoice)||null;
+}
+
+  const wanted=[
+    {label:'Fernanda (aprimorada)',match:'Fernanda'},
+    {label:'Luciana (aprimorada)',match:'Luciana'},
+    {label:'Felipe (aprimorada)',match:'Felipe'},
+    {label:'Rocko',match:'Rocko'},
+  ];
+  el.innerHTML='';
+  wanted.forEach(w=>{
+    const v=voices.find(x=>x.name.includes(w.match)&&x.lang==='pt-BR');
+    const r=voices.find(x=>x.name.includes(w.match));
+    const found=v||r;
+    const o=document.createElement('option');
+    o.value=found?found.name:'_'+w.match;
+    o.textContent=found?w.label:w.label+' (instalar)';
+    if(!found)o.disabled=true;
+    el.appendChild(o);
+  });
+  el.onchange=()=>{
+    selVoice=el.value;
+    notif('Voz: '+el.options[el.selectedIndex].text);
+  };
+}
+  const wanted=[
+    {label:'Fernanda (aprimorada)',match:'Fernanda'},
+    {label:'Luciana (aprimorada)',match:'Luciana'},
+    {label:'Felipe (aprimorada)',match:'Felipe'},
+    {label:'Rocko',match:'Rocko'},
+  ];
+  el.innerHTML='';
+  wanted.forEach(w=>{
+    const v=voices.find(x=>x.name.includes(w.match));
+    const o=document.createElement('option');
+    o.value=v?v.name:'_'+w.match;
+    o.textContent=v?w.label:w.label+' (instalar)';
+    if(!v)o.disabled=true;
+    el.appendChild(o);
+  });
+  el.onchange=()=>{
+    selVoice=el.value;
+    const pick=window.speechSynthesis.getVoices().find(v=>v.name===selVoice);
+    notif('Voz: '+(pick?pick.name:'?'));
+  };
+}
+  const wanted=[
+    {label:'Fernanda (aprimorada)',match:'Fernanda'},
+    {label:'Luciana (aprimorada)',match:'Luciana'},
+    {label:'Felipe (aprimorada)',match:'Felipe'},
+    {label:'Rocko',match:'Rocko'},
+  ];
+  el.innerHTML='<option value="auto">Auto</option>';
+  wanted.forEach(w=>{
+    const v=voices.find(x=>x.name.includes(w.match));
+    const o=document.createElement('option');
+    o.value=v?v.name:'_'+w.match;
+    o.textContent=v?w.label:w.label+' (instalar)';
+    if(!v)o.disabled=true;
+    el.appendChild(o);
+  });
+  el.onchange=()=>{
+    selVoice=el.value;
+    const pick=window.speechSynthesis.getVoices().find(v=>v.name===selVoice);
+    notif('Voz: '+(pick?pick.name:'Auto'));
+  };
+}
+  
+  // Apenas as 4 vozes desejadas
+  const wanted=[
+    {label:'Fernanda (aprimorada)', match:'Fernanda'},
+    {label:'Luciana (aprimorada)',  match:'Luciana'},
+    {label:'Felipe (aprimorada)',   match:'Felipe'},
+    {label:'Rocko',                 match:'Rocko'},
+  ];
+  
+  el.innerHTML='<option value="auto">🤖 Auto</option>';
+  
+  wanted.forEach(w=>{
+    const voice=voices.find(v=>v.name.includes(w.match));
+    const o=document.createElement('option');
+    if(voice){
+      o.value=voice.name;
+      o.textContent=w.label;
+    } else {
+      o.value='__'+w.match;
+      o.textContent=w.label+' (instalar)';
+      o.disabled=true;
+    }
+    if(voice&&voice.name===selVoice)o.selected=true;
+    el.appendChild(o);
+  });
+  
+  el.onchange=()=>{
+    selVoice=el.value;
+    const voices=window.speechSynthesis.getVoices();
+    const pick=voices.find(v=>v.name===selVoice);
+    notif('Voz: '+(pick?pick.name:'Auto'));
+  };
+}
+
+
+function getVoiceBySelection(){
+  const voices=window.speechSynthesis.getVoices();
+  if(selVoice==='auto'||selVoice===''){
+    // Auto: melhor voz masculina pt-BR disponível
+    return voices.find(v=>v.name.includes('Antonio'))||
+           voices.find(v=>v.name.includes('Daniel'))||
+           voices.find(v=>v.name.includes('Eddy'))||
+           voices.find(v=>v.lang==='pt-BR')||
+           voices.find(v=>v.lang.startsWith('pt'))||
+           null;
+  }
+  return voices.find(v=>v.name===selVoice)||null;
+}
+
+  const wanted=[
+    {label:'Fernanda (aprimorada)',match:'Fernanda'},
+    {label:'Luciana (aprimorada)',match:'Luciana'},
+    {label:'Felipe (aprimorada)',match:'Felipe'},
+    {label:'Rocko',match:'Rocko'},
+  ];
+  el.innerHTML='';
+  wanted.forEach(w=>{
+    const v=voices.find(x=>x.name.includes(w.match)&&x.lang==='pt-BR');
+    const r=voices.find(x=>x.name.includes(w.match));
+    const found=v||r;
+    const o=document.createElement('option');
+    o.value=found?found.name:'_'+w.match;
+    o.textContent=found?w.label:w.label+' (instalar)';
+    if(!found)o.disabled=true;
+    el.appendChild(o);
+  });
+  el.onchange=()=>{
+    selVoice=el.value;
+    notif('Voz: '+el.options[el.selectedIndex].text);
+  };
+}
+  const wanted=[
+    {label:'Fernanda (aprimorada)',match:'Fernanda'},
+    {label:'Luciana (aprimorada)',match:'Luciana'},
+    {label:'Felipe (aprimorada)',match:'Felipe'},
+    {label:'Rocko',match:'Rocko'},
+  ];
+  el.innerHTML='';
+  wanted.forEach(w=>{
+    const v=voices.find(x=>x.name.includes(w.match));
+    const o=document.createElement('option');
+    o.value=v?v.name:'_'+w.match;
+    o.textContent=v?w.label:w.label+' (instalar)';
+    if(!v)o.disabled=true;
+    el.appendChild(o);
+  });
+  el.onchange=()=>{
+    selVoice=el.value;
+    const pick=window.speechSynthesis.getVoices().find(v=>v.name===selVoice);
+    notif('Voz: '+(pick?pick.name:'?'));
+  };
+}
+  const wanted=[
+    {label:'Fernanda (aprimorada)',match:'Fernanda'},
+    {label:'Luciana (aprimorada)',match:'Luciana'},
+    {label:'Felipe (aprimorada)',match:'Felipe'},
+    {label:'Rocko',match:'Rocko'},
+  ];
+  el.innerHTML='<option value="auto">Auto</option>';
+  wanted.forEach(w=>{
+    const v=voices.find(x=>x.name.includes(w.match));
+    const o=document.createElement('option');
+    o.value=v?v.name:'_'+w.match;
+    o.textContent=v?w.label:w.label+' (instalar)';
+    if(!v)o.disabled=true;
+    el.appendChild(o);
+  });
+  el.onchange=()=>{
+    selVoice=el.value;
+    const pick=window.speechSynthesis.getVoices().find(v=>v.name===selVoice);
+    notif('Voz: '+(pick?pick.name:'Auto'));
+  };
+}
+  
+  el.innerHTML='<option value="auto">🤖 Auto (melhor disponível)</option>';
+  
+  // Adiciona todas as vozes pt-BR primeiro, depois en-US
+  const ptVoices=voices.filter(v=>v.lang.startsWith('pt'));
+  const enVoices=voices.filter(v=>v.lang.startsWith('en'));
+  const others=voices.filter(v=>!v.lang.startsWith('pt')&&!v.lang.startsWith('en'));
+  
+  if(ptVoices.length){
+    const grp=document.createElement('optgroup');
+    grp.label='Português';
+    ptVoices.forEach(v=>{
+      const o=document.createElement('option');
+      o.value=v.name;
+      o.textContent=v.name+' ('+v.lang+')';
+      if(v.name===selVoice)o.selected=true;
+      grp.appendChild(o);
+    });
+    el.appendChild(grp);
+  }
+  
+  if(enVoices.length){
+    const grp=document.createElement('optgroup');
+    grp.label='English';
+    enVoices.forEach(v=>{
+      const o=document.createElement('option');
+      o.value=v.name;
+      o.textContent=v.name+' ('+v.lang+')';
+      if(v.name===selVoice)o.selected=true;
+      grp.appendChild(o);
+    });
+    el.appendChild(grp);
+  }
+  
+  el.onchange=()=>{
+    selVoice=el.value;
+    const pick=getVoiceBySelection();
+    notif('Voz: '+(pick?pick.name:'Auto'));
+  };
+  
+  console.log('Vozes carregadas:',voices.length,'| pt-BR:',ptVoices.length);
+}
+
+// Seletor de vozes
 let selVoice='';
 
 function buildVoiceSelector(){
   const el=document.getElementById('vsel');
   if(!el)return;
-  const voices=syn.getVoices();
+  const voices=window.speechSynthesis.getVoices();
   if(!voices.length){
-    syn.onvoiceschanged=()=>buildVoiceSelector();
+    window.speechSynthesis.onvoiceschanged=()=>buildVoiceSelector();
     return;
   }
-  // Mostrar apenas vozes pt-BR disponíveis no browser
-  const ptVoices=voices.filter(v=>v.lang.startsWith('pt-BR')||v.lang.startsWith('pt_BR'));
+  const wanted=[
+    {label:'Fernanda (aprimorada)',match:'Fernanda'},
+    {label:'Luciana (aprimorada)',match:'Luciana'},
+    {label:'Felipe (aprimorada)',match:'Felipe'},
+    {label:'Rocko',match:'Rocko'},
+  ];
   el.innerHTML='';
   let first=true;
-  ptVoices.forEach(v=>{
+  wanted.forEach(w=>{
+    const v=voices.find(x=>x.name.includes(w.match));
     const o=document.createElement('option');
-    o.value=v.name;
-    o.textContent=v.name;
-    if(first){o.selected=true;selVoice=v.name;first=false;}
+    o.value=v?v.name:'_'+w.match;
+    o.textContent=v?w.label:w.label+' (instalar)';
+    if(!v)o.disabled=true;
+    if(v&&first){o.selected=true;selVoice=v.name;first=false;}
     el.appendChild(o);
   });
-  if(!ptVoices.length){
-    const o=document.createElement('option');
-    o.textContent='Nenhuma voz pt-BR encontrada';
-    o.disabled=true;
-    el.appendChild(o);
-  }
-  el.onchange=()=>{selVoice=el.value;};
+  el.onchange=()=>{
+    selVoice=el.value;
+    notif('Voz: '+el.options[el.selectedIndex].text);
+  };
 }
 
 if(SR){
@@ -531,7 +758,7 @@ if(SR){
 }
 
 function toggleListen(){
-  if(!rec){notif('Use Safari para voz');return;}
+  if(!rec){notif('Use Chrome ou Edge para voz');return;}
   if(isListen)rec.stop();
   else{if(syn&&syn.speaking)syn.cancel();rec.start();}
 }
@@ -552,26 +779,29 @@ function setTrt(txt,who){
   e.className='trt '+(who==='us'?'us':'nx');
 }
 
-// Fila de fala para Chrome
-let _speakQueue=[];
-let _speaking=false;
-
-function speakEL(txt){
+async function speakEL(txt){
   if(isMuted||!txt)return;
-  _speakQueue.push(txt);
-  if(!_speaking)_processQueue();
-}
-
-function _processQueue(){
-  if(!_speakQueue.length){_speaking=false;return;}
-  _speaking=true;
-  const txt=_speakQueue.shift();
+  const syn=window.speechSynthesis;
   syn.cancel();
+  
+  await new Promise(r=>setTimeout(r,150));
+  
   const u=new SpeechSynthesisUtterance(txt);
-  u.lang='pt-BR';u.rate=0.9;u.pitch=0.85;u.volume=1;
-  const voices=syn.getVoices();
-  const pick=voices.find(v=>v.name===selVoice)||voices.find(v=>v.lang.startsWith('pt-BR'))||null;
-  if(pick){u.voice=pick;u.lang=pick.lang;}
+  u.lang='pt-BR';
+  u.rate=0.9;
+  u.pitch=0.8;
+  u.volume=1;
+  
+  // Espera vozes carregarem se necessário
+  let voices=syn.getVoices();
+  if(!voices.length){
+    await new Promise(r=>{syn.onvoiceschanged=r;setTimeout(r,1000);});
+    voices=syn.getVoices();
+  }
+  
+  const pick=window.speechSynthesis.getVoices().find(v=>v.name===selVoice);
+  if(pick){u.voice=pick;u.lang=pick.lang;u.pitch=0.85;u.rate=0.9;}else{u.lang='pt-BR';u.pitch=0.85;u.rate=0.9;}
+  
   u.onstart=()=>{
     const ml=document.getElementById('mlbl');
     if(ml){ml.textContent='NEXUS FALANDO...';ml.className='ms-lbl sp';}
@@ -581,21 +811,10 @@ function _processQueue(){
     const ml=document.getElementById('mlbl');
     if(ml){ml.textContent='CLIQUE PARA FALAR';ml.className='ms-lbl';}
     animWaveSp(false);
-    _speaking=false;
-    _processQueue();
   };
-  u.onerror=(e)=>{
-    animWaveSp(false);
-    _speaking=false;
-    _processQueue();
-  };
-  // Chrome precisa de delay após cancel
-  setTimeout(()=>syn.speak(u),100);
-  // Keepalive
-  const kav=setInterval(()=>{
-    if(!syn.speaking){clearInterval(kav);return;}
-    if(syn.paused)syn.resume();
-  },200);
+  u.onerror=(e)=>{console.error('voz erro:',e.error);animWaveSp(false);};
+  
+  syn.speak(u);
 }
 
 function toggleMute(){
@@ -609,14 +828,19 @@ function toggleMute(){
 function stopAll(){
   if(rec&&isListen)rec.stop();
   if(syn&&syn.speaking)syn.cancel();
+  if(edgeAudio){edgeAudio.pause();edgeAudio=null;}
   animWave(false);animWaveSp(false);
   const ml=document.getElementById('mlbl');
-  if(ml){ml.textContent='CLIQUE PARA FALAR';ml.className='ms-lbl';}
+  ml.textContent='CLIQUE PARA FALAR';ml.className='ms-lbl';
 }
 
-if(syn)syn.onvoiceschanged=()=>syn.getVoices();
+if(syn)syn.onvoiceschanged=()=>{
+  const vs=syn.getVoices();
+  const pt=vs.filter(v=>v.lang.startsWith('pt'));
+  console.log('Vozes pt-BR:',pt.map(v=>v.name));
+};
 
-// ── WAVEFORM ──
+// // ── WAVEFORM ──
 let wiv=null;
 const rest=[4,8,14,10,6,18,10,20,12,8,22,14,10,16,8,12,6,10,14,8];
 function animWave(on){
