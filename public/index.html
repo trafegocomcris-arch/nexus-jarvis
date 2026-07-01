@@ -538,12 +538,15 @@ function setTrt(txt,who){
   e.className='trt '+(who==='us'?'us':'nx');
 }
 
-async function speakEL(txt){
+function speakEL(txt){
   if(isMuted||!txt)return;
-  if(syn.speaking)syn.cancel();
-  await new Promise(r=>setTimeout(r,200));
-  // Chrome fix: resume se pausado
-  if(syn.paused)syn.resume();
+  // Chrome: nunca chamar cancel() antes de speak()
+  // Aguardar se ainda falando
+  if(syn.speaking){
+    syn.cancel();
+    setTimeout(()=>speakEL(txt),350);
+    return;
+  }
   const u=new SpeechSynthesisUtterance(txt);
   u.lang='pt-BR';u.rate=0.9;u.pitch=0.85;u.volume=1;
   const voices=syn.getVoices();
@@ -559,10 +562,18 @@ async function speakEL(txt){
     if(ml){ml.textContent='CLIQUE PARA FALAR';ml.className='ms-lbl';}
     animWaveSp(false);
   };
-  u.onerror=(e)=>{console.error('voz:',e.error);animWaveSp(false);};
+  u.onerror=(e)=>{
+    console.error('voz erro:',e.error);
+    animWaveSp(false);
+    // Se cancelado, tentar novamente
+    if(e.error==='canceled'){setTimeout(()=>speakEL(txt),400);}
+  };
   syn.speak(u);
-  // Chrome bug fix: keepalive
-  setTimeout(()=>{if(syn.speaking&&syn.paused)syn.resume();},500);
+  // Chrome keepalive fix
+  const kav=setInterval(()=>{
+    if(!syn.speaking){clearInterval(kav);return;}
+    if(syn.paused)syn.resume();
+  },250);
 }
 
 function toggleMute(){
