@@ -193,7 +193,7 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
 .rsw{position:absolute;width:50%;height:1px;background:linear-gradient(90deg,transparent,var(--cyan));top:50%;left:50%;transform-origin:left center;animation:rswe 3s linear infinite;box-shadow:0 0 4px var(--cyan)}
 @keyframes rswe{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-.pr{display:none!important;}.main{grid-template-columns:200px 1fr!important;}
+.main{grid-template-columns:200px 1fr!important;}
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&family=JetBrains+Mono:wght@300;400&display=swap');
 :root{--j-bg:#00040A;--j-c1:#00C8FF;--j-c2:#00E5FF;--j-green:#00FF88;--j-b1:rgba(0,200,255,0.10);--j-b2:rgba(0,200,255,0.20);--j-t1:rgba(0,200,255,0.85);--j-t2:rgba(0,200,255,0.45);--j-t3:rgba(0,200,255,0.25);}
 body{font-family:'Space Grotesk',sans-serif!important;background:var(--j-bg)!important;background-image:linear-gradient(rgba(0,200,255,0.018) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,0.018) 1px,transparent 1px)!important;background-size:28px 28px!important;}
@@ -526,6 +526,11 @@ body{font-family:'Space Grotesk',sans-serif!important;background:var(--j-bg)!imp
 </div>
 
 <script>
+// NEXUS — configuração de IA
+// A chave do Gemini é carregada via variável de ambiente
+window._GK = '';
+</script>
+<script>
 // ── CLOCK ──
 function clock(){
   const n=new Date();
@@ -752,23 +757,35 @@ const fb=[
 
 function processCmd(txt){
   if(!txt||!txt.trim())return;
-  addToHistory('user',txt);
+  if(typeof addToHistory==='function')addToHistory('user',txt);
   setTrt('→ '+txt,'us');
-  const lower=txt.toLowerCase();
-  const RESP={
-    status:{m:['status','situação','resumo','como tá'],r:'Tudo operacional, Christyan. Claude planejando, Zcode revisando o Health Score. 27 tarefas ativas, 2 pipelines rodando.'},
-    tarefas:{m:['tarefa','clickup','pendente','progresso','projeto'],r:'27 tarefas em andamento. Prioridades: ONBOARDING de novos clientes, APPS & melhorias com IA, PROSPECÇÃO comercial. Quer detalhar algum projeto?'},
-    agentes:{m:['agente','gemini','claude','opencode','zcode','pipeline'],r:'Gemini concluiu a pesquisa → Claude. Claude escrevendo spec do Vercel. OpenCode aguardando handoff. Zcode revisando Health Score Engine.'},
-    clientes:{m:['cliente','limas','moro','megahair','gracilene','giimportados'],r:'Clientes ativos: ACT Digital, Limas Shopping (WPP), DR André Moro (reunião pendente), Fada do Megahair (cobrança), Gracilene (anúncios ok). Qual você quer detalhar?'},
-    meta:{m:['meta','anúncio','campanha','ads','tráfego','roas','cpl'],r:'Para análise Meta Ads, acesso via Windsor.ai. Qual cliente e período você quer analisar?'},
-    ola:{m:['olá','oi','bom dia','boa tarde','boa noite'],r:'Pronto, Christyan. Sistemas online, 27 tarefas monitoradas. O que você precisa?'},
-  };
-  let reply=null;
-  for(const k in RESP){if(RESP[k].m.some(m=>lower.includes(m))){reply=RESP[k].r;break;}}
-  if(!reply){const g=['Entendido, Christyan. Quer que eu acione algum agente para tratar isso?','Registrado. Posso acionar o Gemini para pesquisar ou o Claude para planejar. Qual prefere?','Anotado. Quer criar uma tarefa no ClickUp ou prefere uma análise primeiro?'];reply=g[Math.floor(Math.random()*g.length)];}
-  setTimeout(()=>{setTrt(reply,'nx');addToHistory('assistant',reply);speakEL(reply);addFeed('NEXUS',reply.substring(0,80)+(reply.length>80?'...':''),'var(--green)');},300);
+
+  // Chamar Gemini Pro
+  const GEMINI_KEY=window._GK||'';
+  const ctx=`Você é NEXUS, assistente IA da ACT Digital, agência de tráfego pago de Christyan Melo. Personalidade: JARVIS do Homem de Ferro — direto, inteligente, levemente irônico, chama sempre de "Christyan". Contexto: 27 tarefas no ClickUp, agentes Gemini/Claude/OpenCode/Zcode ativos, clientes incluem Limas Shopping, DR André Moro, Fada do Megahair, Gracilene Boutique. Responda em português, máximo 2 parágrafos, seja útil e proativo.`;
+
+  fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      system_instruction:{parts:[{text:ctx}]},
+      contents:[{role:'user',parts:[{text:txt}]}]
+    })
+  })
+  .then(r=>r.json())
+  .then(d=>{
+    const reply=d?.candidates?.[0]?.content?.parts?.[0]?.text||'Não consegui processar, Christyan.';
+    setTrt(reply,'nx');
+    if(typeof addToHistory==='function')addToHistory('assistant',reply);
+    speakEL(reply);
+    addFeed('NEXUS',reply.substring(0,80)+(reply.length>80?'...':''),'var(--green)');
+  })
+  .catch(()=>{
+    const fallback='Sistema de IA temporariamente indisponível. Tente novamente, Christyan.';
+    setTrt(fallback,'nx');
+    speakEL(fallback);
+  });
 }
-function _old_processCmd_replaced(txt){
   const l=txt.toLowerCase();
   let found=null;
   for(const k of Object.keys(cmds)){if(cmds[k].m.some(w=>l.includes(w))){found=cmds[k];break;}}
