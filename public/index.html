@@ -715,8 +715,16 @@ function buildVoiceSelector(){
   const el=document.getElementById('vsel');
   if(!el)return;
   const voices=syn.getVoices();
-  if(!voices.length){syn.onvoiceschanged=()=>buildVoiceSelector();return;}
-  const ptVoices=voices.filter(v=>v.lang.startsWith('pt-BR')||v.lang==='pt_BR');
+  if(!voices.length){
+    syn.onvoiceschanged=()=>buildVoiceSelector();
+    setTimeout(buildVoiceSelector, 500);
+    return;
+  }
+  const ptVoices=voices.filter(v=>v.lang.startsWith('pt-BR')||v.lang==='pt_BR'||v.lang.startsWith('pt'));
+  if(!ptVoices.length){
+    setTimeout(buildVoiceSelector, 500);
+    return;
+  }
   el.innerHTML='';
   let first=true;
   ptVoices.forEach(v=>{
@@ -727,6 +735,8 @@ function buildVoiceSelector(){
   });
   el.onchange=()=>{selVoice=el.value;};
 }
+// Forçar carregamento de vozes
+if(syn) syn.onvoiceschanged=buildVoiceSelector;
 
 if(SR){
   rec=new SR();rec.lang='pt-BR';rec.interimResults=true;rec.continuous=false;
@@ -762,19 +772,15 @@ function setTrt(txt,who){
   e.className='trt '+(who==='us'?'us':'nx');
 }
 
-async function speakEL(txt){
+function speakEL(txt){
   if(isMuted||!txt)return;
-  syn.cancel();
-  await new Promise(r=>setTimeout(r,150));
-  const u=new SpeechSynthesisUtterance(txt);
-  u.lang='pt-BR';u.rate=0.9;u.pitch=0.8;u.volume=1;
-  let voices=syn.getVoices();
-  if(!voices.length){
-    await new Promise(r=>{syn.onvoiceschanged=r;setTimeout(r,1000);});
-    voices=syn.getVoices();
-  }
-  const pick=voices.find(v=>v.name===selVoice)||voices.find(v=>v.lang.startsWith('pt-BR'))||null;
-  if(pick){u.voice=pick;u.lang=pick.lang;u.pitch=0.85;u.rate=0.9;}
+  if(syn.speaking)syn.cancel();
+  setTimeout(()=>{
+    const u=new SpeechSynthesisUtterance(txt);
+    u.lang='pt-BR';u.rate=0.9;u.pitch=0.85;u.volume=1;
+    const voices=syn.getVoices();
+    const pick=voices.find(v=>v.name===selVoice)||voices.find(v=>v.lang==='pt-BR')||voices.find(v=>v.lang.startsWith('pt'))||null;
+    if(pick){u.voice=pick;u.lang=pick.lang;}
   u.onstart=()=>{
     const ml=document.getElementById('mlbl');
     if(ml){ml.textContent='NEXUS FALANDO...';ml.className='ms-lbl sp';}
