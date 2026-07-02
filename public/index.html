@@ -953,12 +953,13 @@ function processCmd(txt){
 
   setTrt('Consultando Gemini...','nx');
 
-  fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',{
+  fetch('https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent',{
     method:'POST',
     headers:{'Content-Type':'application/json','X-goog-api-key':GK},
     body:JSON.stringify({
-      system_instruction:{parts:[{text:SYSTEM}]},
-      contents:[{role:'user',parts:[{text:txt}]}]
+      contents:[
+        {role:'user',parts:[{text:'[SISTEMA]: '+SYSTEM+'\n\n[USUÁRIO]: '+txt}]}
+      ]
     })
   })
   .then(r=>r.json())
