@@ -610,6 +610,9 @@ body{
 </div>
 
 <script>
+window.__env={GK:'%%GK%%',CU:'%%CU%%'};
+</script>
+<script>
 // ── CLOCK ──
 function clock(){
   const n=new Date();
@@ -856,13 +859,15 @@ function processCmd(txt){
     let tarefa = txt;
     let cliente = 'ACT DIGITAL';
     
-    const paraMatch = txt.match(/(?:para|cliente|do|da)\s+([A-ZÁÉÍÓÚÃÕ\s]+?)(?:\s*$|\s*,)/i);
-    if(paraMatch) cliente = paraMatch[1].trim().toUpperCase();
-    
-    // Remover o prefixo de comando
-    tarefa = txt.replace(/^(registrar tarefa|nova tarefa|adicionar tarefa|anota|cria tarefa|crie tarefa):?\s*/i,'')
-               .replace(/\s*(?:para|cliente|do|da)\s+.*$/i,'')
-               .trim().toUpperCase();
+    // Parser simples: tudo após "para" é o cliente
+    const partes = txt.replace(/^(registrar tarefa|nova tarefa|adicionar tarefa|anota|cria tarefa|crie tarefa):?\s*/i,'').trim();
+    const sepIdx = partes.search(/\s+para\s+/i);
+    if(sepIdx > 0){
+      tarefa = partes.substring(0, sepIdx).trim().toUpperCase();
+      cliente = partes.substring(sepIdx).replace(/^\s*para\s*/i,'').trim().toUpperCase();
+    } else {
+      tarefa = partes.toUpperCase();
+    }
     
     const cuName = `[${data}][${tarefa}][${cliente}]`;
     const cuToken = window.__env&&window.__env.CU||'';

@@ -9,17 +9,15 @@ export default async function handler(req) {
 
   const gk = process.env.NEXT_PUBLIC_GK || '';
   const cu = process.env.NEXT_PUBLIC_CU || '';
-
   const baseUrl = 'https://' + req.headers.get('host');
   
   try {
     const res = await fetch(baseUrl + '/index.html');
     let html = await res.text();
     
-    html = html.replace(
-      "window.__env={GK:'NEXT_PUBLIC_GK_PLACEHOLDER',CU:'NEXT_PUBLIC_CU_PLACEHOLDER'};",
-      `window.__env={GK:'${gk}',CU:'${cu}'};`
-    );
+    html = html
+      .replace("'%%GK%%'", `'${gk}'`)
+      .replace("'%%CU%%'", `'${cu}'`);
     
     return new Response(html, {
       headers: {
