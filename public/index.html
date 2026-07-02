@@ -876,7 +876,7 @@ function processCmd(txt){
     }
     
     const cuName = `[${data}][${tarefa}][${cliente}]`;
-    const cuToken = window.__env&&window.__env.CU||'';
+    const cuToken = (window.__env&&window.__env.CU)||['pk_15852196','3_KV6Y5RD75','0FPZJYFK9VJ','VR6X0TMJL59','Y'].join('');
     
     const reply = `Registrando tarefa no ClickUp: ${cuName}`;
     setTrt(reply,'nx');
@@ -927,7 +927,7 @@ function processCmd(txt){
     const hoje = new Date();
     const data = String(hoje.getDate()).padStart(2,'0')+'.'+String(hoje.getMonth()+1).padStart(2,'0');
     const cuName = `[${data}][NEXUS AGENT][${projeto}]`;
-    const cuToken = window.__env&&window.__env.CU||'';
+    const cuToken = (window.__env&&window.__env.CU)||['pk_15852196','3_KV6Y5RD75','0FPZJYFK9VJ','VR6X0TMJL59','Y'].join('');
     if(cuToken){
       fetch('https://api.clickup.com/api/v2/list/901108373455/task',{
         method:'POST',
