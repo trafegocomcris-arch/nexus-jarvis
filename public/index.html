@@ -348,6 +348,8 @@ body{
     <span>4 AGENTES</span>
     <span style="color:var(--dim)">·</span>
     <span id="hstat">CLAUDE → PLANEJANDO</span>
+    <span style="color:var(--dim)">·</span>
+    <span id="hist-btn" onclick="toggleHistorico()" style="cursor:pointer;color:rgba(0,200,255,0.5);letter-spacing:2px;font-size:9px;border:1px solid rgba(0,200,255,0.15);padding:3px 10px;border-radius:2px;transition:all .2s;" onmouseover="this.style.color='#00C8FF';this.style.borderColor='rgba(0,200,255,0.4)'" onmouseout="this.style.color='rgba(0,200,255,0.5)';this.style.borderColor='rgba(0,200,255,0.15)'">HISTÓRICO</span>
   </div>
   <div style="display:flex;align-items:center;gap:16px">
     <div id="dt"></div>
@@ -817,35 +819,108 @@ function animWaveSp(on){
 }
 
 // ── COMMANDS ──
-const cmds={
-  status:{m:['status','situação','resumo','como tá'],r:()=>`Tudo operacional, Christyan. Claude está planejando, Zcode revisando o Health Score. Você tem 27 tarefas em andamento no ClickUp e 2 pipelines ativos.`},
-  tarefas:{m:['tarefa','clickup','pendente','em progresso'],r:()=>`Você tem 27 tarefas em progresso no ClickUp. As principais são: fechamento da Dra Samira, captação da mentoria Dra Thaine, automação Dr Italo, e as missões do PUP GEL. Quer que eu ajude com alguma?`},
-  tokens:{m:['token','consumo','custo','gasto'],r:()=>`Hoje consumimos 470 mil tokens. Claude usou 247 mil, custando 74 centavos. Gemini usou 89 mil por 22 centavos. Total de 1 dólar e 36 centavos hoje.`},
-  integracoes:{m:['integra','conecta','plataforma'],r:()=>`Tenho 10 integrações ativas. ClickUp, n8n, Meta Ads, Supabase e GitHub estão online. WhatsApp API ainda está offline aguardando definição do provider.`},
-  gemini:{m:['gemini','pesquisa','research'],r:()=>`Gemini concluiu a pesquisa há 14 minutos. O research.md está disponível com recomendações sobre Vercel KV e Edge Functions.`},
-  claude:{m:['claude','spec','plano'],r:()=>`Claude está escrevendo a spec do deploy no Vercel. Estimativa de conclusão em aproximadamente 10 minutos.`},
-  handoff:{m:['handoff','entregou','passou'],r:()=>`Último handoff foi do Gemini para o Claude há 14 minutos. 5 handoffs registrados hoje no git.`},
-  pupgel:{m:['pup gel','pupgel'],r:()=>`Você tem 6 tarefas do PUP GEL em andamento: SEO do site, workspace no ClickUp, treinamento NASA com Samira, TikTok, Mercado Livre e o site comercial. Quer que eu ajude com alguma?`},
-  thaine:{m:['thaine','dra thaine'],r:()=>`3 tarefas relacionadas à Dra Thaine: verificar a página, subir campanha de captação da mentoria, e adicionar link na bio. Por onde quer começar?`},
-};
-const fb=[
-  q=>`Registrado: "${q}". Recomendo acionar o Gemini para pesquisar o contexto antes de planejar. Quer que eu prepare o prompt?`,
-  q=>`Certo, Christyan. Para "${q}" o melhor caminho é definir no AGENT HANDOFF e iniciar pelo Gemini.`,
-  q=>`Entendido. Vou adicionar "${q}" à fila de tarefas. Qual agente você quer acionar primeiro?`,
-];
+// ── HISTÓRICO DE CONVERSAS ──────────────────────
+const convHistory = [];
 
-function processCmd(txt){
-  const l=txt.toLowerCase();
-  let found=null;
-  for(const k of Object.keys(cmds)){if(cmds[k].m.some(w=>l.includes(w))){found=cmds[k];break;}}
-  const resp=found?found.r():fb[Math.floor(Math.random()*fb.length)](txt);
-  setTimeout(()=>{
-    setTrt(resp,'nx');speakEL(resp);
-    addFeed('NEXUS',`Respondeu: "${txt.substring(0,35)}${txt.length>35?'...':''}"`,`var(--gold)`);
-    if(found===cmds.tokens)swtab('tok',document.querySelectorAll('.rtab')[2]);
-    if(found===cmds.integracoes)swtab('int',document.querySelectorAll('.rtab')[1]);
-    if(found===cmds.tarefas)swtab('tarefas',document.querySelector('.rtab'));
-  },400);
+function addToHistory(role, text){
+  const ts = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  convHistory.push({role, text, ts});
+  renderHistoryConv();
+}
+
+function renderHistoryConv(){
+  const el = document.getElementById('hist-conv-list');
+  if(!el) return;
+  el.innerHTML = '';
+  [...convHistory].reverse().forEach(item => {
+    const div = document.createElement('div');
+    div.style.cssText = `display:flex;flex-direction:column;gap:4px;padding:12px 16px;background:${item.role==='user'?'rgba(0,200,255,0.04)':'rgba(0,255,136,0.02)'};border:1px solid ${item.role==='user'?'rgba(0,200,255,0.1)':'rgba(0,255,136,0.08)'};border-radius:2px;`;
+    div.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:9px;letter-spacing:2px;color:${item.role==='user'?'#00C8FF':'#00FF88'};font-family:'JetBrains Mono',monospace;">${item.role==='user'?'// CHRISTYAN':'// NEXUS'}</span>
+        <span style="font-size:9px;color:rgba(0,200,255,0.25);font-family:'JetBrains Mono',monospace;">${item.ts}</span>
+      </div>
+      <div style="font-size:12px;color:rgba(0,200,255,0.75);line-height:1.6;">${item.text}</div>
+    `;
+    el.appendChild(div);
+  });
+
+  // Tarefas no histórico
+  const wip = document.getElementById('hist-tasks-wip');
+  const done = document.getElementById('hist-tasks-done');
+  if(wip) wip.innerHTML = `
+    <div style="font-size:11px;color:rgba(0,200,255,0.7);padding:6px 0;border-bottom:1px solid rgba(0,200,255,0.06);">ONBOARDING NOVOS CLIENTES</div>
+    <div style="font-size:11px;color:rgba(0,200,255,0.7);padding:6px 0;border-bottom:1px solid rgba(0,200,255,0.06);">APPS & MELHORIAS COM IA</div>
+    <div style="font-size:11px;color:rgba(0,200,255,0.7);padding:6px 0;border-bottom:1px solid rgba(0,200,255,0.06);">PROSPECÇÃO E REUNIÃO</div>
+    <div style="font-size:11px;color:rgba(0,200,255,0.7);padding:6px 0;border-bottom:1px solid rgba(0,200,255,0.06);">CAMPANHA GRUPOS WPP</div>
+    <div style="font-size:11px;color:rgba(0,200,255,0.7);padding:6px 0;">COBRANÇA E ALINHAMENTO</div>
+  `;
+  if(done) done.innerHTML = `
+    <div style="font-size:11px;color:rgba(0,255,136,0.6);padding:6px 0;border-bottom:1px solid rgba(0,255,136,0.06);">ANÚNCIOS FESTIVAL ABACAXI</div>
+    <div style="font-size:11px;color:rgba(0,255,136,0.6);padding:6px 0;">SUBIR NOVOS ANÚNCIOS</div>
+  `;
+}
+
+// ── JARVIS — IA PRINCIPAL VIA API ANTHROPIC ──────────
+const JARVIS_SYSTEM = `Você é NEXUS, o assistente de inteligência artificial central da ACT Digital, agência de tráfego pago especializada em saúde, estética e varejo no Brasil. Você fala com Christyan Melo, o dono e operador.
+
+Sua personalidade é exatamente como o JARVIS do Homem de Ferro: direto, inteligente, levemente irônico quando apropriado, eficiente, sempre chamando o usuário de "Christyan" (nunca de "Sr. Melo" ou outros títulos). Você é proativo, antecipa necessidades e age como um verdadeiro parceiro de negócios.
+
+Contexto operacional atual:
+- 27 tarefas ativas no ClickUp
+- Agentes ativos: Gemini (pesquisa), Claude (planejamento/spec), OpenCode (implementação), Zcode (revisão)
+- Projetos principais: NEXUS Executor, CS Agent (WhatsApp), Dashboard ACT (Meta Ads)
+- Clientes ativos: ACT Digital, Limas Shopping, DR André Moro, Fada do Megahair, Gracilene Boutique, IG Import Juazeiro, Giimportados
+- Integrações: ClickUp, n8n, Meta Ads (Windsor.ai), Supabase, GitHub
+
+Você conversa naturalmente sobre qualquer assunto: negócios, estratégia de tráfego pago, clientes, campanhas Meta Ads, processos da agência, análises, ideias. Você NÃO é um chatbot genérico — você conhece a ACT Digital profundamente.
+
+Quando o usuário pedir para ACIONAR um agente específico ou criar uma TAREFA nos agentes (NEXUS Executor, CS Agent, etc.), informe que está registrando e acionando o agente. Para tudo mais, responda diretamente de forma inteligente e útil.
+
+Responda sempre em português brasileiro. Seja conciso mas completo. Máximo 3 parágrafos por resposta, a menos que o assunto exija mais.`;
+
+async function processCmd(txt){
+  if(!txt || !txt.trim()) return;
+  
+  // Registrar pergunta no histórico
+  addToHistory('user', txt);
+  setTrt('→ ' + txt, 'us');
+  
+  // Mostrar que está pensando
+  const thinking = 'Processando...';
+  setTrt(thinking, 'nx');
+  
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        system: JARVIS_SYSTEM,
+        messages: convHistory
+          .filter(h => h.role !== 'system')
+          .slice(-10)
+          .map(h => ({
+            role: h.role === 'user' ? 'user' : 'assistant',
+            content: h.text
+          }))
+      })
+    });
+    
+    const data = await response.json();
+    const reply = data.content?.[0]?.text || 'Não consegui processar, Christyan.';
+    
+    setTrt(reply, 'nx');
+    addToHistory('assistant', reply);
+    speakEL(reply);
+    addFeed('NEXUS', reply.substring(0, 80) + (reply.length > 80 ? '...' : ''), 'var(--j-green)');
+    
+  } catch(err) {
+    const fallback = 'Conexão com a IA temporariamente indisponível. Tente novamente, Christyan.';
+    setTrt(fallback, 'nx');
+    speakEL(fallback);
+  }
 }
 
 function typeSubmit(){
@@ -1022,7 +1097,98 @@ window.addEventListener('load',()=>{
     renderer.render(scene,cam);
   })();
 })();
+
+function toggleHistorico(){
+  const panel = document.getElementById('historico-panel');
+  const btn = document.getElementById('hist-btn');
+  const isOpen = panel.style.display !== 'none';
+  panel.style.display = isOpen ? 'none' : 'flex';
+  btn.style.color = isOpen ? 'rgba(0,200,255,0.5)' : '#00C8FF';
+  btn.style.borderColor = isOpen ? 'rgba(0,200,255,0.15)' : 'rgba(0,200,255,0.4)';
+}
+
+function switchHTab(name, el){
+  document.querySelectorAll('.htab').forEach(t=>{
+    t.style.color='rgba(0,200,255,0.35)';
+    t.style.borderBottomColor='transparent';
+  });
+  el.style.color='#00C8FF';
+  el.style.borderBottomColor='#00C8FF';
+  ['conv','tasks','agents'].forEach(n=>{
+    const c = document.getElementById('hcon-'+n);
+    if(c) c.style.display = n===name ? 'flex' : 'none';
+  });
+}
+
 </script>
+
+
+<!-- PAINEL HISTÓRICO -->
+<div id="historico-panel" style="display:none;position:fixed;top:50px;left:0;right:0;bottom:96px;z-index:100;background:rgba(0,4,10,0.97);border-top:1px solid rgba(0,200,255,0.15);overflow:hidden;flex-direction:column;">
+  
+  <!-- Abas internas -->
+  <div style="display:flex;border-bottom:1px solid rgba(0,200,255,0.1);background:rgba(0,4,10,0.98);">
+    <div class="htab htab-a" onclick="switchHTab('conv',this)" style="padding:12px 24px;font-size:9px;letter-spacing:2px;color:#00C8FF;border-bottom:2px solid #00C8FF;cursor:pointer;font-family:'JetBrains Mono',monospace;">// CONVERSAS</div>
+    <div class="htab" onclick="switchHTab('tasks',this)" style="padding:12px 24px;font-size:9px;letter-spacing:2px;color:rgba(0,200,255,0.35);border-bottom:2px solid transparent;cursor:pointer;font-family:'JetBrains Mono',monospace;">// TAREFAS</div>
+    <div class="htab" onclick="switchHTab('agents',this)" style="padding:12px 24px;font-size:9px;letter-spacing:2px;color:rgba(0,200,255,0.35);border-bottom:2px solid transparent;cursor:pointer;font-family:'JetBrains Mono',monospace;">// AGENTES</div>
+    <div style="flex:1;"></div>
+    <div onclick="toggleHistorico()" style="padding:12px 24px;font-size:9px;letter-spacing:2px;color:rgba(0,200,255,0.35);cursor:pointer;font-family:'JetBrains Mono',monospace;">✕ FECHAR</div>
+  </div>
+
+  <!-- Conteúdo: CONVERSAS -->
+  <div id="hcon-conv" style="flex:1;overflow-y:auto;padding:20px 32px;display:flex;flex-direction:column;gap:12px;">
+    <div style="font-size:10px;color:rgba(0,200,255,0.3);letter-spacing:2px;font-family:'JetBrains Mono',monospace;margin-bottom:8px;">// HISTÓRICO DE CONVERSAS COM O NEXUS</div>
+    <div id="hist-conv-list" style="display:flex;flex-direction:column;gap:10px;">
+      <!-- preenchido por JS -->
+    </div>
+  </div>
+
+  <!-- Conteúdo: TAREFAS -->
+  <div id="hcon-tasks" style="flex:1;overflow-y:auto;padding:20px 32px;display:none;flex-direction:column;gap:12px;">
+    <div style="font-size:10px;color:rgba(0,200,255,0.3);letter-spacing:2px;font-family:'JetBrains Mono',monospace;margin-bottom:8px;">// DETALHAMENTO DE TAREFAS DOS AGENTES</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div style="background:rgba(0,200,255,0.03);border:1px solid rgba(0,200,255,0.1);border-radius:2px;padding:16px;">
+        <div style="font-size:9px;color:rgba(0,200,255,0.4);letter-spacing:2px;margin-bottom:10px;font-family:'JetBrains Mono',monospace;">// EM PROGRESSO</div>
+        <div id="hist-tasks-wip" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+      <div style="background:rgba(0,200,255,0.03);border:1px solid rgba(0,200,255,0.1);border-radius:2px;padding:16px;">
+        <div style="font-size:9px;color:rgba(0,255,136,0.4);letter-spacing:2px;margin-bottom:10px;font-family:'JetBrains Mono',monospace;">// CONCLUÍDAS</div>
+        <div id="hist-tasks-done" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Conteúdo: AGENTES -->
+  <div id="hcon-agents" style="flex:1;overflow-y:auto;padding:20px 32px;display:none;flex-direction:column;gap:12px;">
+    <div style="font-size:10px;color:rgba(0,200,255,0.3);letter-spacing:2px;font-family:'JetBrains Mono',monospace;margin-bottom:8px;">// ATIVIDADE DOS AGENTES</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;">
+      <div style="background:rgba(0,200,255,0.03);border:1px solid rgba(0,200,255,0.1);border-radius:2px;padding:16px;">
+        <div style="font-size:11px;color:#00C8FF;letter-spacing:2px;margin-bottom:6px;font-weight:500;">GEMINI</div>
+        <div style="font-size:10px;color:rgba(0,200,255,0.5);margin-bottom:10px;">pesquisa concluída</div>
+        <div style="font-size:9px;color:rgba(0,200,255,0.3);letter-spacing:1px;">Última ação</div>
+        <div style="font-size:10px;color:rgba(0,200,255,0.6);margin-top:4px;">Handoff → CLAUDE</div>
+      </div>
+      <div style="background:rgba(0,200,255,0.03);border:1px solid rgba(0,200,255,0.1);border-radius:2px;padding:16px;">
+        <div style="font-size:11px;color:#00C8FF;letter-spacing:2px;margin-bottom:6px;font-weight:500;">CLAUDE</div>
+        <div style="font-size:10px;color:rgba(0,200,255,0.5);margin-bottom:10px;">escrevendo spec</div>
+        <div style="font-size:9px;color:rgba(0,200,255,0.3);letter-spacing:1px;">Última ação</div>
+        <div style="font-size:10px;color:rgba(0,200,255,0.6);margin-top:4px;">Vercel KV + Edge Functions</div>
+      </div>
+      <div style="background:rgba(0,200,255,0.03);border:1px solid rgba(245,177,19,0.15);border-radius:2px;padding:16px;">
+        <div style="font-size:11px;color:#F5B113;letter-spacing:2px;margin-bottom:6px;font-weight:500;">OPENCODE</div>
+        <div style="font-size:10px;color:rgba(245,177,19,0.5);margin-bottom:10px;">aguardando handoff</div>
+        <div style="font-size:9px;color:rgba(0,200,255,0.3);letter-spacing:1px;">Última ação</div>
+        <div style="font-size:10px;color:rgba(0,200,255,0.6);margin-top:4px;">research.md atualizado</div>
+      </div>
+      <div style="background:rgba(0,200,255,0.03);border:1px solid rgba(0,200,255,0.06);border-radius:2px;padding:16px;">
+        <div style="font-size:11px;color:rgba(0,200,255,0.4);letter-spacing:2px;margin-bottom:6px;font-weight:500;">ZCODE</div>
+        <div style="font-size:10px;color:rgba(0,200,255,0.3);margin-bottom:10px;">aguardando</div>
+        <div style="font-size:9px;color:rgba(0,200,255,0.3);letter-spacing:1px;">Última ação</div>
+        <div style="font-size:10px;color:rgba(0,200,255,0.4);margin-top:4px;">Health Score Engine — 3 tipos incompletos</div>
+      </div>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
