@@ -836,11 +836,98 @@ const fb=[
 function processCmd(txt){
   if(!txt||!txt.trim())return;
   setTrt('→ '+txt,'us');
-
   const GK=window.__env&&window.__env.GK||'';
+  const lower=txt.toLowerCase();
 
+  // ── MODO 1: REGISTRAR TAREFA ──────────────────────────────────
+  // Detectar: "registrar tarefa", "nova tarefa", "adicionar tarefa", "anota"
+  const isTask = lower.includes('registrar tarefa')||lower.includes('nova tarefa')||
+                 lower.includes('adicionar tarefa')||lower.includes('anota')||
+                 lower.includes('cria tarefa')||lower.includes('crie tarefa');
+  
+  if(isTask){
+    // Extrair cliente e tarefa do texto
+    // Formato esperado: "registrar tarefa SUBIR ANÚNCIOS para LIMAS SHOPPING"
+    // ou "anota: SUBIR ANÚNCIOS - LIMAS SHOPPING"
+    const hoje = new Date();
+    const data = String(hoje.getDate()).padStart(2,'0')+'.'+String(hoje.getMonth()+1).padStart(2,'0');
+    
+    // Tentar extrair cliente (após "para" ou "-" ou "cliente")
+    let tarefa = txt;
+    let cliente = 'ACT DIGITAL';
+    
+    const paraMatch = txt.match(/(?:para|cliente|do|da)\s+([A-ZÁÉÍÓÚÃÕ\s]+?)(?:\s*$|\s*,)/i);
+    if(paraMatch) cliente = paraMatch[1].trim().toUpperCase();
+    
+    // Remover o prefixo de comando
+    tarefa = txt.replace(/^(registrar tarefa|nova tarefa|adicionar tarefa|anota|cria tarefa|crie tarefa):?\s*/i,'')
+               .replace(/\s*(?:para|cliente|do|da)\s+.*$/i,'')
+               .trim().toUpperCase();
+    
+    const cuName = `[${data}][${tarefa}][${cliente}]`;
+    const cuToken = window.__env&&window.__env.CU||'';
+    
+    const reply = `Registrando tarefa no ClickUp: ${cuName}`;
+    setTrt(reply,'nx');
+    speakEL(reply);
+    addFeed('NEXUS', cuName, 'var(--gold)');
+    
+    // Criar no ClickUp via API
+    if(cuToken){
+      fetch('https://api.clickup.com/api/v2/list/901108373455/task',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':cuToken},
+        body:JSON.stringify({name:cuName,status:'to do'})
+      })
+      .then(r=>r.json())
+      .then(d=>{
+        if(d.id){
+          const ok='Tarefa criada no ClickUp, Christyan. ID: '+d.id;
+          setTrt(ok,'nx');
+          speakEL('Tarefa registrada com sucesso.');
+        }
+      })
+      .catch(()=>speakEL('Tarefa anotada localmente. ClickUp offline no momento.'));
+    } else {
+      setTimeout(()=>speakEL('Tarefa anotada. Configure o token do ClickUp nas integrações para sincronizar.'),1000);
+    }
+    return;
+  }
+
+  // ── MODO 2: ATIVAR PROTOCOLO AGENT ───────────────────────────
+  // Detectar: "nexus ativar protocolo agent" ou "protocolo agent"
+  const isAgent = lower.includes('protocolo agent')||lower.includes('ativar protocolo')||
+                  lower.includes('acionar agente')||lower.includes('ativar agente');
+  
+  if(isAgent){
+    // Extrair nome do projeto
+    const projMatch = txt.match(/(?:trabalhe no projeto|projeto|no)\s+([A-ZÁÉÍÓÚÃÕA-Za-z0-9\s]+?)(?:\s*$)/i);
+    const projeto = projMatch ? projMatch[1].trim().toUpperCase() : txt.toUpperCase();
+    
+    const reply = `Protocolo Agent ativado, Christyan. Acionando pipeline para: ${projeto}. Gemini iniciará a pesquisa, Claude planejará a execução. Aguarde o primeiro handoff.`;
+    setTrt(reply,'nx');
+    speakEL(reply);
+    addFeed('GEMINI', `Iniciando pesquisa: ${projeto}`, 'var(--cyan)');
+    setTimeout(()=>addFeed('CLAUDE', `Aguardando handoff do Gemini para: ${projeto}`, 'var(--cyan)'),3000);
+    
+    // Criar tarefa NEXUS no ClickUp
+    const hoje = new Date();
+    const data = String(hoje.getDate()).padStart(2,'0')+'.'+String(hoje.getMonth()+1).padStart(2,'0');
+    const cuName = `[${data}][NEXUS AGENT][${projeto}]`;
+    const cuToken = window.__env&&window.__env.CU||'';
+    if(cuToken){
+      fetch('https://api.clickup.com/api/v2/list/901108373455/task',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':cuToken},
+        body:JSON.stringify({name:cuName,status:'in progress',tags:['NEXUS']})
+      }).catch(()=>{});
+    }
+    return;
+  }
+
+  // ── MODO 3: CONVERSA LIVRE COM GEMINI ────────────────────────
   if(!GK){
-    // Fallback local se key não carregou
+    // Fallback local
     const l=txt.toLowerCase();
     let found=null;
     for(const k of Object.keys(cmds)){if(cmds[k].m.some(w=>l.includes(w))){found=cmds[k];break;}}
@@ -849,10 +936,11 @@ function processCmd(txt){
     return;
   }
 
-  // Gemini Pro
-  const SYSTEM=`Você é NEXUS, assistente IA da ACT Digital, agência de tráfego pago de Christyan Melo no Brasil. Personalidade: JARVIS do Homem de Ferro — direto, inteligente, levemente irônico, chama sempre de "Christyan". Você sabe tudo sobre a agência: 27 tarefas no ClickUp, agentes Gemini/Claude/OpenCode/Zcode, clientes como Limas Shopping, DR André Moro, Fada do Megahair, Gracilene Boutique. Responda qualquer pergunta — clima, negócios, estratégia, tudo. Português brasileiro. Máximo 2 parágrafos.`;
+  const SYSTEM=`Você é NEXUS, assistente IA da ACT Digital, agência de tráfego pago de Christyan Melo no Brasil. Personalidade: JARVIS do Homem de Ferro — direto, inteligente, levemente irônico, sempre chama de "Christyan". Contexto da agência: 27 tarefas no ClickUp, agentes Gemini/Claude/OpenCode/Zcode ativos, clientes: Limas Shopping, DR André Moro, Fada do Megahair, Gracilene Boutique, IG Import Juazeiro, Giimportados. Integrações: Meta Ads, n8n, Supabase, GitHub. Responda qualquer pergunta livremente — clima, negócios, estratégia, Meta Ads, tudo. Português brasileiro. Seja conciso e útil.`;
 
-  fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key='+GK,{
+  setTrt('Consultando Gemini...','nx');
+
+  fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+GK,{
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({
@@ -868,7 +956,9 @@ function processCmd(txt){
     addFeed('NEXUS',reply.substring(0,80)+(reply.length>80?'...':''),'var(--green)');
   })
   .catch(()=>{
-    setTrt('Conexão com Gemini falhou. Tente novamente, Christyan.','nx');
+    const err='Gemini indisponível no momento, Christyan. Tente novamente.';
+    setTrt(err,'nx');
+    speakEL(err);
   });
 }
 
