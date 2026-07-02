@@ -699,6 +699,18 @@ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 const syn=window.speechSynthesis;
 let rec=null,isListen=false,isMuted=false;
 let selVoice='';
+
+// Desbloquear áudio no Chrome no primeiro clique
+let _unlocked=false;
+document.addEventListener('click',()=>{
+  if(_unlocked)return;
+  _unlocked=true;
+  const u=new SpeechSynthesisUtterance(' ');
+  u.volume=0.01;
+  syn.speak(u);
+  setTimeout(()=>syn.cancel(),100);
+},{once:true});
+
 let _unlocked=false;
 
 // Desbloquear áudio no primeiro clique (Chrome)
@@ -736,7 +748,7 @@ function buildVoiceSelector(){
   el.onchange=()=>{selVoice=el.value;};
 }
 // Forçar carregamento de vozes
-if(syn) syn.onvoiceschanged=buildVoiceSelector;
+
 
 if(SR){
   rec=new SR();rec.lang='pt-BR';rec.interimResults=true;rec.continuous=false;
@@ -813,7 +825,7 @@ function stopAll(){
   if(ml){ml.textContent='CLIQUE PARA FALAR';ml.className='ms-lbl';}
 }
 
-if(syn)syn.onvoiceschanged=()=>syn.getVoices();
+
 
 // ── WAVEFORM ──
 let wiv=null;
@@ -929,6 +941,14 @@ function processCmd(txt){
 
 // ── BOOT ──
 window.addEventListener('load',()=>{
+  // Retry de vozes a cada 500ms por até 5s
+  let _vRetry=0;
+  const _vInt=setInterval(()=>{
+    const voices=syn.getVoices();
+    if(voices.length){buildVoiceSelector();clearInterval(_vInt);}
+    if(++_vRetry>10)clearInterval(_vInt);
+  },500);
+  syn.onvoiceschanged=()=>{buildVoiceSelector();};
   buildVoiceSelector();
   updTok();
   setTimeout(()=>{
@@ -941,7 +961,11 @@ window.addEventListener('load',()=>{
 });
 </script>
 <script>if('serviceWorker'in navigator){window.addEventListener('load',()=>{
-  buildVoiceSelector();navigator.serviceWorker.register('/sw.js').catch(()=>{});});}</script>
+  // Retry de vozes a cada 500ms por até 5s
+  let _vRetry=0;
+  buildVoiceSelector();
+  if('serviceWorker'in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
+});}</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
