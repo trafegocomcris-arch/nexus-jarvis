@@ -387,13 +387,15 @@ body{
 
 <!-- CENTER -->
 <div class="ca">
+
+  <!-- REATOR 3D -->
   <div class="arc" style="position:relative;width:320px;height:320px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
     <canvas id="nexus-3d" style="position:absolute;top:0;left:0;width:320px;height:320px;cursor:pointer;" onclick="toggleListen()" title="Clique para falar"></canvas>
     <div class="rip" id="r1"></div><div class="rip" id="r2"></div>
-    <div class="ms-lbl" id="mlbl" style="position:absolute;bottom:-32px;left:50%;transform:translateX(-50%);white-space:nowrap;z-index:2;">CLIQUE PARA FALAR</div>
   </div>
-  </div>
-  <div class="wf" id="wf">
+
+  <!-- WAVEFORM -->
+  <div class="wf" id="wf" style="margin-top:16px;">
     <div class="wb" style="height:4px"></div><div class="wb" style="height:8px"></div>
     <div class="wb" style="height:14px"></div><div class="wb" style="height:10px"></div>
     <div class="wb" style="height:6px"></div><div class="wb" style="height:18px"></div>
@@ -405,20 +407,34 @@ body{
     <div class="wb" style="height:6px"></div><div class="wb" style="height:10px"></div>
     <div class="wb" style="height:14px"></div><div class="wb" style="height:8px"></div>
   </div>
-  <div class="vc">
-    <button class="bm" id="bmute" onclick="toggleMute()">🔊</button>
-    <button class="bv" id="bmic" onclick="toggleListen()">🎤</button>
-    <button class="bm" onclick="stopAll()">⏹</button>
+
+  <!-- LABEL CLIQUE PARA FALAR -->
+  <div class="ms-lbl" id="mlbl" style="margin-top:8px;letter-spacing:4px;text-align:center;">CLIQUE PARA FALAR</div>
+
+  <!-- BOTÕES: SOM · MIC · PAUSE -->
+  <div class="vc" style="display:flex;gap:12px;justify-content:center;margin-top:12px;">
+    <button class="bv" id="bmute" onclick="toggleMute()" title="Mute">🔊</button>
+    <button class="bv" id="bmic" onclick="toggleListen()" title="Microfone">🎤</button>
+    <button class="bv" onclick="stopAll()" title="Parar">⏹</button>
   </div>
-  <div class="tra"><div class="trt" id="trt">Pronto para ouvir você, Christyan.</div></div>
-  <div style="display:flex;align-items:center;gap:8px;width:100%;max-width:430px;margin-bottom:6px">
-    <span style="font-size:9px;color:var(--dim);letter-spacing:1px;flex-shrink:0">VOZ</span>
-    <select id="vsel" style="flex:1;background:rgba(0,229,255,0.04);border:1px solid var(--border);border-radius:3px;padding:5px 8px;font-size:10px;color:var(--cyan);font-family:'Share Tech Mono',monospace;outline:none;cursor:pointer"></select>
+
+  <!-- SELETOR DE VOZ -->
+  <div style="display:flex;align-items:center;gap:8px;width:100%;max-width:340px;margin-top:10px;justify-content:center;">
+    <span style="font-size:9px;color:var(--j-t3);letter-spacing:2px;flex-shrink:0;font-family:'JetBrains Mono',monospace;">VOZ</span>
+    <select id="vsel" style="flex:1;background:rgba(0,200,255,0.03);border:1px solid rgba(0,200,255,0.12);border-radius:2px;padding:6px 10px;font-size:11px;color:rgba(0,200,255,0.85);font-family:'Space Grotesk',sans-serif;outline:none;cursor:pointer;"></select>
   </div>
-  <div class="tir">
-    <input class="ti" id="ti" placeholder="ou digite aqui..." onkeydown="if(event.key==='Enter')typeSubmit()">
+
+  <!-- TEXTO DE RESPOSTA -->
+  <div class="tra" style="margin-top:14px;width:100%;max-width:440px;text-align:center;">
+    <div class="trt" id="trt">Pronto para ouvir você, Christyan.</div>
+  </div>
+
+  <!-- INPUT -->
+  <div class="tir" style="width:100%;max-width:440px;margin-top:10px;display:flex;gap:8px;">
+    <input class="ti" id="ti" placeholder="ou digite aqui..." onkeydown="if(event.key==='Enter')typeSubmit()" style="flex:1;padding:10px 14px;">
     <button class="ts" onclick="typeSubmit()">ENVIAR</button>
   </div>
+
 </div>
 
 <!-- RIGHT PANEL -->
