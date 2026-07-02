@@ -781,18 +781,20 @@ function speakEL(txt){
     const voices=syn.getVoices();
     const pick=voices.find(v=>v.name===selVoice)||voices.find(v=>v.lang==='pt-BR')||voices.find(v=>v.lang.startsWith('pt'))||null;
     if(pick){u.voice=pick;u.lang=pick.lang;}
-  u.onstart=()=>{
-    const ml=document.getElementById('mlbl');
-    if(ml){ml.textContent='NEXUS FALANDO...';ml.className='ms-lbl sp';}
-    animWaveSp(true);
-  };
-  u.onend=()=>{
-    const ml=document.getElementById('mlbl');
-    if(ml){ml.textContent='CLIQUE PARA FALAR';ml.className='ms-lbl';}
-    animWaveSp(false);
-  };
-  u.onerror=(e)=>{console.error('voz erro:',e.error);animWaveSp(false);};
-  syn.speak(u);
+    u.onstart=()=>{
+      const ml=document.getElementById('mlbl');
+      if(ml){ml.textContent='NEXUS FALANDO...';ml.className='ms-lbl sp';}
+      animWaveSp(true);
+    };
+    u.onend=()=>{
+      const ml=document.getElementById('mlbl');
+      if(ml){ml.textContent='CLIQUE PARA FALAR';ml.className='ms-lbl';}
+      animWaveSp(false);
+    };
+    u.onerror=(e)=>{console.error('voz erro:',e.error);animWaveSp(false);};
+    syn.speak(u);
+    setInterval(()=>{if(syn.speaking&&syn.paused)syn.resume();},200);
+  },150);
 }
 
 function toggleMute(){
