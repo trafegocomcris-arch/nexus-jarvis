@@ -23,7 +23,7 @@
 body{font-family:'Share Tech Mono',monospace;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;position:relative}
 body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.07) 2px,rgba(0,0,0,0.07) 4px);pointer-events:none;z-index:1000}
 body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
-.layout{position:relative;z-index:10;display:grid;grid-template-columns:450px 1fr 450px;grid-template-rows:48px 1fr 96px;height:100vh}
+.layout{position:relative;z-index:10;display:grid;grid-template-columns:338px 1fr 338px;grid-template-rows:48px 1fr 96px;height:100vh}
 
 /* TOPBAR */
 .topbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--border);background:rgba(0,20,25,0.95)}
@@ -37,7 +37,7 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
 #dt{font-size:10px;color:var(--muted);letter-spacing:1px}
 
 /* PANELS */
-.pl,.pr{background:rgba(0,15,20,0.85);padding:14px 12px;display:flex;flex-direction:column;gap:11px;overflow-y:auto}
+.pl,.pr{background:rgba(0,4,10,0.96);padding:16px 14px;display:flex;flex-direction:column;gap:11px;overflow-y:auto}
 .pl{border-right:1px solid var(--border)}
 .pr{border-left:1px solid var(--border)}
 .pl::-webkit-scrollbar,.pr::-webkit-scrollbar{width:3px}
@@ -72,8 +72,7 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
 
 /* CENTER */
 .ca{display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;background:radial-gradient(ellipse at center,rgba(0,30,40,0.8) 0%,var(--bg) 70%)}
-.arc{position:relative;width:320px;height:320px;flex-shrink:0}
-#nexus-3d{width:320px;height:320px;display:block;cursor:pointer;}
+.arc{position:relative;width:290px;height:290px;flex-shrink:0}
 .ring{position:absolute;border-radius:50%;border-style:solid;top:50%;left:50%;transform:translate(-50%,-50%)}
 .r1{width:290px;height:290px;border:1px solid rgba(0,229,255,0.1);animation:rs 30s linear infinite reverse}
 .r2{width:256px;height:256px;border:1px solid rgba(0,229,255,0.18);animation:rs 20s linear infinite}
@@ -194,178 +193,140 @@ body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(r
 .rsw{position:absolute;width:50%;height:1px;background:linear-gradient(90deg,transparent,var(--cyan));top:50%;left:50%;transform-origin:left center;animation:rswe 3s linear infinite;box-shadow:0 0 4px var(--cyan)}
 @keyframes rswe{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-.main{grid-template-columns:200px 1fr!important;}
-.proj-card{background:rgba(0,229,255,0.03);border:1px solid rgba(0,229,255,0.1);border-radius:4px;margin-bottom:8px;overflow:hidden;cursor:pointer;}
-.proj-header{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-bottom:1px solid rgba(0,229,255,0.08);}
-.proj-name{font-size:9px;color:var(--cyan);letter-spacing:1px;font-weight:600;}
-.proj-stats{display:flex;gap:6px;font-size:8px;}
-.ps-done{color:#00ff88;}.ps-wip{color:#f5b113;}.ps-todo{color:var(--dim);}
-.proj-tasks{display:none;padding:6px 10px;}
-.proj-card.open .proj-tasks{display:block;}
-.proj-task{display:flex;align-items:center;gap:6px;padding:3px 0;border-bottom:1px solid rgba(0,229,255,0.05);font-size:8px;letter-spacing:.5px;}
-.proj-task:last-child{border:none;}
-.pt-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
-.pt-done{background:#00ff88;}.pt-wip{background:#f5b113;}.pt-todo{background:rgba(0,229,255,0.3);}
-.proj-task a{color:var(--muted);text-decoration:none;flex:1;}
-.proj-task a:hover{color:var(--cyan);}
+.pr{display:none!important;}.main{grid-template-columns:200px 1fr!important;}
+/* ══════════════════════════════════════
+   NEXUS JARVIS — HUD VISUAL
+══════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&family=JetBrains+Mono:wght@300;400&display=swap');
 
-/* === CONCEITO 3: FUTURISTA DEEP SPACE === */
 :root{
-  --c3-bg:#00040A;
-  --c3-cyan:#00C8FF;
-  --c3-cyan-dim:rgba(0,200,255,0.15);
-  --c3-cyan-mid:rgba(0,200,255,0.35);
-  --c3-green:#00FF88;
-  --c3-border:rgba(0,200,255,0.1);
-  --c3-border-strong:rgba(0,200,255,0.2);
-  --c3-text:rgba(0,200,255,0.8);
-  --c3-text-dim:rgba(0,200,255,0.4);
-  --c3-grid:rgba(0,200,255,0.025);
+  --j-bg:#00040A;
+  --j-c1:#00C8FF;
+  --j-c2:#00E5FF;
+  --j-green:#00FF88;
+  --j-b1:rgba(0,200,255,0.10);
+  --j-b2:rgba(0,200,255,0.20);
+  --j-t1:rgba(0,200,255,0.85);
+  --j-t2:rgba(0,200,255,0.45);
+  --j-t3:rgba(0,200,255,0.25);
 }
 
-body{background:var(--c3-bg)!important;background-image:linear-gradient(var(--c3-grid) 1px,transparent 1px),linear-gradient(90deg,var(--c3-grid) 1px,transparent 1px)!important;background-size:32px 32px!important;}
+body{
+  font-family:'Space Grotesk',sans-serif!important;
+  background:var(--j-bg)!important;
+  background-image:
+    linear-gradient(rgba(0,200,255,0.018) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,200,255,0.018) 1px,transparent 1px)!important;
+  background-size:28px 28px!important;
+}
 
-/* Header */
-.hd{background:rgba(0,4,10,0.95)!important;border-bottom:1px solid var(--c3-border)!important;}
-.hl{color:var(--c3-cyan)!important;letter-spacing:6px!important;font-size:13px!important;font-weight:300!important;}
-.hv{color:var(--c3-text-dim)!important;border:1px solid var(--c3-border)!important;font-size:9px!important;}
-.hst{color:var(--c3-text-dim)!important;font-size:9px!important;}
-.hst .on{color:var(--c3-green)!important;}
-.ht{color:var(--c3-text-dim)!important;font-size:11px!important;}
-.ht .sep{color:var(--c3-border-strong)!important;}
-.hcl{color:var(--c3-cyan)!important;font-size:13px!important;font-weight:300!important;font-variant-numeric:tabular-nums;}
+/* HEADER */
+.hd{background:rgba(0,4,10,0.97)!important;border-bottom:1px solid var(--j-b1)!important;height:50px!important;}
+.hl{color:var(--j-c1)!important;letter-spacing:8px!important;font-size:12px!important;font-weight:300!important;font-family:'Space Grotesk',sans-serif!important;}
+.hv{color:var(--j-t3)!important;border:1px solid var(--j-b1)!important;font-size:9px!important;letter-spacing:1px!important;border-radius:2px!important;}
+.hst{font-size:9px!important;color:var(--j-t3)!important;letter-spacing:2px!important;}
+.hst .on{color:var(--j-green)!important;}
+.ht{color:var(--j-t2)!important;font-size:10px!important;letter-spacing:1px!important;}
+.hcl{color:var(--j-c1)!important;font-size:15px!important;font-weight:300!important;font-family:'JetBrains Mono',monospace!important;letter-spacing:1px!important;}
 
-/* Barras laterais — aumentar 50% */
-.lbar{width:450px!important;background:rgba(0,4,10,0.9)!important;border-right:1px solid var(--c3-border)!important;}
-.pr{width:450px!important;background:rgba(0,4,10,0.9)!important;border-left:1px solid var(--c3-border)!important;}
-.main{grid-template-columns:450px 1fr 450px!important;}
-
-/* Seções da lateral */
-.slbl{font-size:9px!important;color:var(--c3-text-dim)!important;letter-spacing:3px!important;border-bottom:1px solid var(--c3-border)!important;padding-bottom:6px!important;margin-bottom:8px!important;}
+/* BARRAS LATERAIS */
+.pl{border-right:1px solid var(--j-b1)!important;background:rgba(0,4,10,0.96)!important;}
+.pr{border-left:1px solid var(--j-b1)!important;background:rgba(0,4,10,0.96)!important;}
+.slbl{font-size:9px!important;color:var(--j-t3)!important;letter-spacing:3px!important;border-bottom:1px solid var(--j-b1)!important;padding-bottom:8px!important;margin-bottom:10px!important;font-family:'JetBrains Mono',monospace!important;}
 .slbl::before{content:'// ';}
 
-/* Agentes */
-.ag{background:rgba(0,200,255,0.02)!important;border:1px solid var(--c3-border)!important;border-radius:2px!important;margin-bottom:4px!important;padding:8px 10px!important;}
-.ag:hover{border-color:var(--c3-border-strong)!important;background:rgba(0,200,255,0.04)!important;}
-.an{font-size:11px!important;color:var(--c3-text)!important;letter-spacing:2px!important;}
-.as{font-size:10px!important;color:var(--c3-text-dim)!important;letter-spacing:1px!important;}
+/* AGENTES */
+.ag{background:rgba(0,200,255,0.02)!important;border:1px solid var(--j-b1)!important;border-radius:2px!important;padding:10px 12px!important;margin-bottom:5px!important;transition:border-color .2s!important;}
+.ag:hover{border-color:var(--j-b2)!important;background:rgba(0,200,255,0.04)!important;}
+.an{font-size:12px!important;color:var(--j-t1)!important;letter-spacing:2px!important;font-weight:500!important;}
+.as{font-size:10px!important;color:var(--j-t3)!important;letter-spacing:.5px!important;}
 .ad{width:7px!important;height:7px!important;border-radius:50%!important;}
 
-/* Pipeline */
-.pb{background:rgba(0,200,255,0.06)!important;border-radius:1px!important;}
-.pbf{border-radius:1px!important;}
-.pbl{font-size:10px!important;color:var(--c3-text-dim)!important;letter-spacing:1px!important;}
-.pbv{font-size:10px!important;color:var(--c3-cyan)!important;}
+/* PIPELINE */
+.pb{background:rgba(0,200,255,0.06)!important;border-radius:1px!important;height:3px!important;}
+.pbf{border-radius:1px!important;height:3px!important;}
+.pbl{font-size:11px!important;color:var(--j-t2)!important;letter-spacing:.5px!important;}
+.pbv{font-size:11px!important;color:var(--j-c1)!important;font-family:'JetBrains Mono',monospace!important;}
 
-/* Status */
-.stl{font-size:10px!important;color:var(--c3-text-dim)!important;letter-spacing:1px!important;}
-.stv{font-size:11px!important;color:var(--c3-cyan)!important;font-weight:400!important;}
+/* STATUS */
+.stl{font-size:11px!important;color:var(--j-t2)!important;letter-spacing:.5px!important;}
+.stv{font-size:14px!important;color:var(--j-c1)!important;font-family:'JetBrains Mono',monospace!important;font-weight:300!important;}
 
-/* Projetos */
-.proj-card{background:rgba(0,200,255,0.02)!important;border:1px solid var(--c3-border)!important;border-radius:2px!important;}
-.proj-card:hover{border-color:var(--c3-border-strong)!important;}
-.proj-name{font-size:10px!important;color:var(--c3-text)!important;letter-spacing:2px!important;}
-.proj-task a{font-size:10px!important;color:var(--c3-text-dim)!important;letter-spacing:.5px!important;}
-.proj-task a:hover{color:var(--c3-cyan)!important;}
-.ps-done{color:var(--c3-green)!important;font-size:9px!important;}
+/* PROJETOS SIDEBAR */
+.proj-card{background:rgba(0,200,255,0.02)!important;border:1px solid var(--j-b1)!important;border-radius:2px!important;margin-bottom:6px!important;}
+.proj-card:hover{border-color:var(--j-b2)!important;}
+.proj-header{border-bottom:1px solid var(--j-b1)!important;padding:9px 12px!important;}
+.proj-name{font-size:11px!important;color:var(--j-t1)!important;letter-spacing:1.5px!important;font-weight:500!important;}
+.proj-task a{font-size:11px!important;color:var(--j-t2)!important;}
+.proj-task a:hover{color:var(--j-c1)!important;}
+.ps-done{color:var(--j-green)!important;font-size:9px!important;}
 .ps-wip{color:#F5B113!important;font-size:9px!important;}
-.ps-todo{color:var(--c3-text-dim)!important;font-size:9px!important;}
+.ps-todo{color:var(--j-t3)!important;font-size:9px!important;}
 
-/* Centro */
-.trt{font-size:12px!important;color:var(--c3-text)!important;letter-spacing:.5px!important;line-height:1.6!important;}
-.ms-lbl{font-size:10px!important;color:var(--c3-text-dim)!important;letter-spacing:4px!important;}
-.ms-lbl.sp{color:var(--c3-cyan)!important;}
-.ms-lbl.on{color:var(--c3-green)!important;}
+/* CENTRO */
+.mc{background:transparent!important;}
+.trt{font-size:13px!important;color:var(--j-t1)!important;line-height:1.7!important;letter-spacing:.2px!important;text-align:center!important;max-width:380px!important;}
+.ms-lbl{font-size:10px!important;color:var(--j-t3)!important;letter-spacing:4px!important;font-family:'JetBrains Mono',monospace!important;}
+.ms-lbl.sp{color:var(--j-c1)!important;}
+.ms-lbl.on{color:var(--j-green)!important;}
 
-/* Input */
-.ti{background:rgba(0,200,255,0.03)!important;border:1px solid var(--c3-border)!important;color:var(--c3-text)!important;font-size:11px!important;border-radius:2px!important;letter-spacing:.5px!important;}
-.ti::placeholder{color:var(--c3-text-dim)!important;}
-.ts{background:transparent!important;border:1px solid var(--c3-border-strong)!important;color:var(--c3-cyan)!important;font-size:9px!important;border-radius:2px!important;letter-spacing:3px!important;}
+/* INPUT */
+.tir{background:rgba(0,200,255,0.02)!important;border:1px solid var(--j-b1)!important;border-radius:2px!important;padding:4px!important;}
+.ti{background:transparent!important;border:none!important;color:var(--j-t1)!important;font-size:12px!important;letter-spacing:.3px!important;font-family:'Space Grotesk',sans-serif!important;}
+.ti::placeholder{color:var(--j-t3)!important;}
+.ts{background:transparent!important;border:1px solid var(--j-b2)!important;color:var(--j-c1)!important;font-size:9px!important;letter-spacing:3px!important;border-radius:2px!important;font-family:'JetBrains Mono',monospace!important;}
 .ts:hover{background:rgba(0,200,255,0.06)!important;}
 
-/* Abas direitas */
-.rtab{font-size:9px!important;color:var(--c3-text-dim)!important;letter-spacing:2px!important;}
-.rtab.a{color:var(--c3-cyan)!important;border-bottom-color:var(--c3-cyan)!important;}
-.rtabs{border-bottom:1px solid var(--c3-border)!important;background:rgba(0,4,10,0.8)!important;}
+/* ABAS DIREITA */
+.rtabs{background:rgba(0,4,10,0.9)!important;border-bottom:1px solid var(--j-b1)!important;}
+.rtab{font-size:9px!important;color:var(--j-t3)!important;letter-spacing:2px!important;font-family:'JetBrains Mono',monospace!important;}
+.rtab.a{color:var(--j-c1)!important;border-bottom-color:var(--j-c1)!important;}
 
-/* Integrações */
-.ii{background:rgba(0,200,255,0.02)!important;border:1px solid var(--c3-border)!important;border-radius:2px!important;margin-bottom:4px!important;}
-.iin{font-size:10px!important;color:var(--c3-text)!important;letter-spacing:1px!important;}
-.iid{font-size:9px!important;color:var(--c3-text-dim)!important;}
-.ibg{font-size:8px!important;border-radius:2px!important;letter-spacing:1px!important;padding:2px 6px!important;}
-.ibg.bok{background:rgba(0,255,136,0.1)!important;color:var(--c3-green)!important;border:1px solid rgba(0,255,136,0.2)!important;}
-.ibg.bof{background:rgba(255,255,255,0.04)!important;color:rgba(255,255,255,0.2)!important;border:1px solid rgba(255,255,255,0.08)!important;}
+/* INTEGRAÇÕES */
+.ii{background:rgba(0,200,255,0.02)!important;border:1px solid var(--j-b1)!important;border-radius:2px!important;margin-bottom:5px!important;padding:9px 12px!important;}
+.iin{font-size:11px!important;color:var(--j-t1)!important;letter-spacing:.5px!important;font-weight:500!important;}
+.iid{font-size:10px!important;color:var(--j-t3)!important;}
+.ibg.bok{background:rgba(0,255,136,0.08)!important;color:var(--j-green)!important;border:1px solid rgba(0,255,136,0.15)!important;font-size:8px!important;border-radius:2px!important;letter-spacing:1px!important;}
+.ibg.bof{background:rgba(255,255,255,0.03)!important;color:rgba(255,255,255,0.2)!important;border:1px solid rgba(255,255,255,0.06)!important;font-size:8px!important;border-radius:2px!important;}
 
-/* Tokens */
-.tc{background:rgba(0,200,255,0.02)!important;border:1px solid var(--c3-border)!important;border-radius:2px!important;}
-.tn{font-size:10px!important;color:var(--c3-text)!important;letter-spacing:1px!important;}
-.tm{font-size:9px!important;color:var(--c3-text-dim)!important;}
-.tv{font-size:13px!important;color:var(--c3-cyan)!important;font-weight:300!important;letter-spacing:1px!important;}
-.tl{font-size:8px!important;color:var(--c3-text-dim)!important;letter-spacing:1px!important;}
+/* TOKENS */
+.tc{background:rgba(0,200,255,0.02)!important;border:1px solid var(--j-b1)!important;border-radius:2px!important;padding:10px 12px!important;margin-bottom:5px!important;}
+.tn{font-size:11px!important;color:var(--j-t1)!important;letter-spacing:.5px!important;font-weight:500!important;}
+.tv{font-size:16px!important;color:var(--j-c1)!important;font-family:'JetBrains Mono',monospace!important;font-weight:300!important;}
+.tl{font-size:9px!important;color:var(--j-t3)!important;letter-spacing:.5px!important;}
 .tbt{background:rgba(0,200,255,0.06)!important;border-radius:1px!important;}
-.tsess{font-size:9px!important;color:var(--c3-text-dim)!important;}
 
-/* Feed */
-.fbar{background:rgba(0,4,10,0.95)!important;border-top:1px solid var(--c3-border)!important;}
-.fl{font-size:9px!important;color:var(--c3-text-dim)!important;letter-spacing:2px!important;}
-.fe{font-size:10px!important;color:var(--c3-text-dim)!important;}
-.fe .fi{font-size:9px!important;letter-spacing:1px!important;}
-.fe .claude .fi{color:var(--c3-cyan)!important;}
+/* BOTÕES VOZ */
+.bv{background:rgba(0,200,255,0.03)!important;border:1px solid var(--j-b1)!important;border-radius:2px!important;color:var(--j-t2)!important;font-size:16px!important;width:40px!important;height:40px!important;}
+.bv:hover{background:rgba(0,200,255,0.08)!important;border-color:var(--j-b2)!important;}
+.bv.on{background:rgba(0,200,255,0.12)!important;border-color:var(--j-c1)!important;color:var(--j-c1)!important;}
+
+/* SELETOR VOZ */
+#vsel{font-size:11px!important;color:var(--j-t1)!important;background:rgba(0,200,255,0.03)!important;border:1px solid var(--j-b1)!important;border-radius:2px!important;letter-spacing:.3px!important;font-family:'Space Grotesk',sans-serif!important;}
+
+/* FEED */
+.fbar{background:rgba(0,4,10,0.97)!important;border-top:1px solid var(--j-b1)!important;}
+.fl{font-size:9px!important;color:var(--j-t3)!important;letter-spacing:2px!important;font-family:'JetBrains Mono',monospace!important;}
+.fl::before{content:'// ';}
+.fe{font-size:11px!important;color:var(--j-t2)!important;}
+.fe .fi{font-size:9px!important;letter-spacing:1px!important;font-family:'JetBrains Mono',monospace!important;}
+.fe .claude .fi{color:var(--j-c1)!important;}
 .fe .gemini .fi{color:#4285f4!important;}
 .fe .zcode .fi{color:#b388ff!important;}
-.fe .nexus .fi{color:var(--c3-green)!important;}
-.ft{font-size:12px!important;color:var(--c3-cyan)!important;font-weight:300!important;}
-.ft .sep{color:var(--c3-border-strong)!important;}
+.fe .nexus .fi{color:var(--j-green)!important;}
+.ft{font-size:13px!important;color:var(--j-c1)!important;font-weight:300!important;font-family:'JetBrains Mono',monospace!important;}
+.ft .sep{color:var(--j-b2)!important;}
 
-/* Botões voz */
-.bv{background:rgba(0,200,255,0.03)!important;border:1px solid var(--c3-border)!important;border-radius:2px!important;color:var(--c3-text-dim)!important;font-size:14px!important;}
-.bv:hover{background:rgba(0,200,255,0.08)!important;border-color:var(--c3-border-strong)!important;}
-.bv.on{background:rgba(0,200,255,0.1)!important;border-color:var(--c3-cyan)!important;color:var(--c3-cyan)!important;}
-.bv.muted{color:rgba(255,100,100,0.6)!important;}
+/* WAVEFORM */
+.wb{background:var(--j-c1)!important;opacity:.5!important;}
+.wf.on .wb{opacity:.9!important;}
 
-/* Seletor de voz */
-#vsel{font-size:10px!important;color:var(--c3-text)!important;background:rgba(0,200,255,0.03)!important;border:1px solid var(--c3-border)!important;border-radius:2px!important;letter-spacing:.5px!important;}
+/* NOTIF */
+.notif{background:rgba(0,4,10,0.97)!important;border:1px solid var(--j-b2)!important;color:var(--j-c1)!important;font-size:10px!important;letter-spacing:1px!important;border-radius:2px!important;font-family:'JetBrains Mono',monospace!important;}
 
-/* Notificações */
-.notif{background:rgba(0,4,10,0.95)!important;border:1px solid var(--c3-border-strong)!important;color:var(--c3-cyan)!important;font-size:10px!important;letter-spacing:1px!important;border-radius:2px!important;}
-
-/* Projetos tarefas */
-.proj-header{border-bottom:1px solid var(--c3-border)!important;}
-.proj-tasks{background:rgba(0,200,255,0.01)!important;}
-
-/* Waveform */
-.wv rect{fill:var(--c3-cyan)!important;opacity:0.4!important;}
-
-/* Arcos do reator já são SVG, manter estilo original */
-
-/* === TIPOGRAFIA MELHORADA === */
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&family=JetBrains+Mono:wght@300;400&display=swap');
-body{font-family:'Space Grotesk',sans-serif!important;}
-code,pre,.hcl,.stv,.tv,.ft{font-family:'JetBrains Mono','Share Tech Mono',monospace!important;}
-.an{font-size:12px!important;font-weight:500!important;letter-spacing:1.5px!important;}
-.as{font-size:11px!important;letter-spacing:.5px!important;}
-.slbl{font-size:10px!important;letter-spacing:2.5px!important;font-weight:400!important;}
-.pbl{font-size:11px!important;letter-spacing:.5px!important;}
-.pbv{font-size:12px!important;font-weight:500!important;}
-.stl{font-size:11px!important;letter-spacing:.5px!important;}
-.stv{font-size:14px!important;font-weight:400!important;}
-.proj-name{font-size:11px!important;letter-spacing:1.5px!important;font-weight:500!important;}
-.proj-task a{font-size:11px!important;letter-spacing:.3px!important;}
-.iin{font-size:11px!important;letter-spacing:.5px!important;}
-.iid{font-size:10px!important;}
-.tn{font-size:11px!important;letter-spacing:.5px!important;}
-.tv{font-size:16px!important;font-weight:300!important;}
-.tl{font-size:10px!important;letter-spacing:.5px!important;}
-.trt{font-size:13px!important;line-height:1.7!important;letter-spacing:.2px!important;}
-.ms-lbl{font-size:11px!important;letter-spacing:3px!important;}
-.hcl{font-size:15px!important;font-weight:300!important;}
-.ft{font-size:14px!important;}
-.fe{font-size:11px!important;}
-.rtab{font-size:10px!important;letter-spacing:1.5px!important;}
-.anm{font-size:12px!important;font-weight:500!important;letter-spacing:.5px!important;}
-.ast{font-size:10px!important;letter-spacing:.3px!important;}
-
-</style>
+/* Remover fundo do centro */
+.mc{background:transparent!important;}
+.tra{background:transparent!important;}
 
 </style>
 </head>
@@ -426,10 +387,11 @@ code,pre,.hcl,.stv,.tv,.ft{font-family:'JetBrains Mono','Share Tech Mono',monosp
 
 <!-- CENTER -->
 <div class="ca">
-  <div class="arc" style="position:relative;display:flex;align-items:center;justify-content:center;">
-    <canvas id="nexus-3d" onclick="toggleListen()" title="Clique para falar"></canvas>
+  <div class="arc" style="position:relative;width:320px;height:320px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+    <canvas id="nexus-3d" style="position:absolute;top:0;left:0;width:320px;height:320px;cursor:pointer;" onclick="toggleListen()" title="Clique para falar"></canvas>
     <div class="rip" id="r1"></div><div class="rip" id="r2"></div>
-    <div class="ms-lbl" id="mlbl" style="position:absolute;bottom:-28px;left:50%;transform:translateX(-50%);white-space:nowrap;">CLIQUE PARA FALAR</div>
+    <div class="ms-lbl" id="mlbl" style="position:absolute;bottom:-32px;left:50%;transform:translateX(-50%);white-space:nowrap;z-index:2;">CLIQUE PARA FALAR</div>
+  </div>
   </div>
   <div class="wf" id="wf">
     <div class="wb" style="height:4px"></div><div class="wb" style="height:8px"></div>
@@ -462,8 +424,8 @@ code,pre,.hcl,.stv,.tv,.ft{font-family:'JetBrains Mono','Share Tech Mono',monosp
 <!-- RIGHT PANEL -->
 <div class="pr">
   <div class="rtabs">
-    
-    <div class="rtab a" onclick="swtab('proj',this)">Projetos</div><div class="rtab" onclick="swtab('int',this)">Integrações</div>
+    <div class="rtab a" onclick="swtab('tarefas',this)">ClickUp</div>
+    <div class="rtab" onclick="swtab('int',this)">Integrações</div>
     <div class="rtab" onclick="swtab('tok',this)">Tokens</div>
   </div>
 
@@ -479,105 +441,7 @@ code,pre,.hcl,.stv,.tv,.ft{font-family:'JetBrains Mono','Share Tech Mono',monosp
   </div>
 
   <!-- INTEGRATIONS -->
-  <div class="rcon on" id="rcon-proj">
-  <div class="slbl">Tarefas por Projeto</div>
-
-  <div class="proj-card" onclick="this.classList.toggle('open')">
-    <div class="proj-header">
-      <span class="proj-name">ACT DIGITAL</span>
-      <span class="proj-stats"><span class="ps-done">✓0</span><span class="ps-wip">⟳5</span><span class="ps-todo">●13</span></span>
-    </div>
-    <div class="proj-tasks">
-      <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="https://app.clickup.com/t/868k7ezx5" target="_blank">ONBOARDING - NOVOS CLIENTES</a></div>
-      <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="https://app.clickup.com/t/868k53m6u" target="_blank">APPS & MELHORIAS COM IA</a></div>
-      <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="https://app.clickup.com/t/868k53z2p" target="_blank">PROSPECÇÃO E REUNIÃO</a></div>
-      <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="https://app.clickup.com/t/868k54680" target="_blank">PENDÊNCIAS CONTÁBEIS</a></div>
-      <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="https://app.clickup.com/t/868k546cx" target="_blank">DIMINUIR PRO-LABORE</a></div>
-      <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="https://app.clickup.com/t/868k7f0dt" target="_blank">SEGREDOS DA TERRA</a></div>
-      <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="https://app.clickup.com/t/868k7f0c4" target="_blank">REFORMA DE CADEIRAS</a></div>
-      <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="https://app.clickup.com/t/868k7f08w" target="_blank">CRIAR FLUXO ONBOARDING</a></div>
-      <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="https://app.clickup.com/t/868k7eqkp" target="_blank">DOCS AGÊNCIA</a></div>
-      <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="https://app.clickup.com/t/868k7eqgh" target="_blank">MELHORIAS INTERNAS</a></div>
-      <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="https://app.clickup.com/t/868k7eqcy" target="_blank">VERIFICAR TODOS OS CLIENTES</a></div>
-      <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="https://app.clickup.com/t/868k541vd" target="_blank">FECHAMENTO: ARUMÁ AÇAÍ</a></div>
-      <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="https://app.clickup.com/t/868k541fp" target="_blank">FECHAMENTO: ACIUM LOBÃO</a></div>
-      <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="https://app.clickup.com/t/868k6cbzt" target="_blank">MUDANÇA DE ENDEREÇO</a></div>
-      <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="https://app.clickup.com/t/868k6cby1" target="_blank">DISTRATO DOS COLABORADORES</a></div>
-    </div>
-  </div>
-
-  <div class="proj-card" onclick="this.classList.toggle('open')">
-    <div class="proj-header">
-      <span class="proj-name">LIMAS SHOPPING</span>
-      <span class="proj-stats"><span class="ps-done">✓0</span><span class="ps-wip">⟳1</span><span class="ps-todo">●0</span></span>
-    </div>
-    <div class="proj-tasks">
-      <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="https://app.clickup.com/t/868k5c7xe" target="_blank">SUBIR CAMPANHA GRUPOS WPP</a></div>
-    </div>
-  </div>
-
-  <div class="proj-card" onclick="this.classList.toggle('open')">
-    <div class="proj-header">
-      <span class="proj-name">DR ANDRÉ MORO</span>
-      <span class="proj-stats"><span class="ps-done">✓0</span><span class="ps-wip">⟳1</span><span class="ps-todo">●0</span></span>
-    </div>
-    <div class="proj-tasks">
-      <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="https://app.clickup.com/t/868k49a2u" target="_blank">REUNIÃO DE ALINHAMENTO</a></div>
-    </div>
-  </div>
-
-  <div class="proj-card" onclick="this.classList.toggle('open')">
-    <div class="proj-header">
-      <span class="proj-name">FADA DO MEGAHAIR</span>
-      <span class="proj-stats"><span class="ps-done">✓0</span><span class="ps-wip">⟳1</span><span class="ps-todo">●0</span></span>
-    </div>
-    <div class="proj-tasks">
-      <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="https://app.clickup.com/t/868k52ay2" target="_blank">COBRANÇA E ALINHAMENTO</a></div>
-    </div>
-  </div>
-
-  <div class="proj-card" onclick="this.classList.toggle('open')">
-    <div class="proj-header">
-      <span class="proj-name">GRACILENE BOUTIQUE</span>
-      <span class="proj-stats"><span class="ps-done">✓1</span><span class="ps-wip">⟳0</span><span class="ps-todo">●0</span></span>
-    </div>
-    <div class="proj-tasks">
-      <div class="proj-task"><div class="pt-dot pt-done"></div><a href="https://app.clickup.com/t/868k7f0md" target="_blank">SUBIR ANÚNCIOS FESTIVAL ABACAXI</a></div>
-    </div>
-  </div>
-
-  <div class="proj-card" onclick="this.classList.toggle('open')">
-    <div class="proj-header">
-      <span class="proj-name">IG IMPORT JUAZEIRO</span>
-      <span class="proj-stats"><span class="ps-done">✓1</span><span class="ps-wip">⟳0</span><span class="ps-todo">●0</span></span>
-    </div>
-    <div class="proj-tasks">
-      <div class="proj-task"><div class="pt-dot pt-done"></div><a href="https://app.clickup.com/t/868k7ey6h" target="_blank">SUBIR NOVOS ANÚNCIOS</a></div>
-    </div>
-  </div>
-
-  <div class="proj-card" onclick="this.classList.toggle('open')">
-    <div class="proj-header">
-      <span class="proj-name">GIIMPORTADOS</span>
-      <span class="proj-stats"><span class="ps-done">✓0</span><span class="ps-wip">⟳0</span><span class="ps-todo">●1</span></span>
-    </div>
-    <div class="proj-tasks">
-      <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="https://app.clickup.com/t/868k4hz4a" target="_blank">CRIAR PLANEJAMENTO + PROPOSTA</a></div>
-    </div>
-  </div>
-
-  <div class="proj-card" onclick="this.classList.toggle('open')">
-    <div class="proj-header">
-      <span class="proj-name">GERAL</span>
-      <span class="proj-stats"><span class="ps-done">✓0</span><span class="ps-wip">⟳2</span><span class="ps-todo">●0</span></span>
-    </div>
-    <div class="proj-tasks">
-      <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="https://app.clickup.com/t/868k529zn" target="_blank">COBRAR PAGAMENTOS</a></div>
-      <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="https://app.clickup.com/t/868k52a9b" target="_blank">PENDÊNCIAS LICITAÇÃO</a></div>
-    </div>
-  </div>
-</div>
-<div class="rcon" id="rcon-int">
+  <div class="rcon" id="rcon-int">
     <div class="slbl">IAs Conectadas</div>
     <div class="ii on"><span>🧠</span><div style="flex:1"><div class="iin">Claude (Anthropic)</div><div class="iid">claude-sonnet-4-6 · API</div></div><div class="ibg bok">ON</div></div>
     <div class="ii on"><span>🔍</span><div style="flex:1"><div class="iin">Gemini Pro (Google)</div><div class="iid">gemini-2.5-pro · API</div></div><div class="ibg bok">ON</div></div>
@@ -596,7 +460,7 @@ code,pre,.hcl,.stv,.tv,.ft{font-family:'JetBrains Mono','Share Tech Mono',monosp
   <div class="rcon" id="rcon-tok">
     <div class="slbl">Consumo Hoje</div>
     <div class="tc">
-      <div class="th"><div class="tn">CLAUDE</div><div class="tm">sonnet-4-6</div></div>
+      <div class="th"><div class="tn">🧠 CLAUDE</div><div class="tm">sonnet-4-6</div></div>
       <div class="tns">
         <div class="tnv"><div class="tv u" id="ctk">247K</div><div class="tl">TOKENS</div></div>
         <div class="tnv"><div class="tv">1M</div><div class="tl">LIMITE</div></div>
@@ -606,7 +470,7 @@ code,pre,.hcl,.stv,.tv,.ft{font-family:'JetBrains Mono','Share Tech Mono',monosp
       <div class="tsess">8 sessões · média 30K</div>
     </div>
     <div class="tc">
-      <div class="th"><div class="tn">GEMINI</div><div class="tm">2.5-pro</div></div>
+      <div class="th"><div class="tn">🔍 GEMINI</div><div class="tm">2.5-pro</div></div>
       <div class="tns">
         <div class="tnv"><div class="tv u" id="gtk" style="color:var(--blue)">89K</div><div class="tl">TOKENS</div></div>
         <div class="tnv"><div class="tv">1M ctx</div><div class="tl">CONTEXTO</div></div>
@@ -616,7 +480,7 @@ code,pre,.hcl,.stv,.tv,.ft{font-family:'JetBrains Mono','Share Tech Mono',monosp
       <div class="tsess">3 sessões · pesquisa</div>
     </div>
     <div class="tc">
-      <div class="th"><div class="tn">OPENCODE</div><div class="tm">anthropic API</div></div>
+      <div class="th"><div class="tn">⚙️ OPENCODE</div><div class="tm">anthropic API</div></div>
       <div class="tns">
         <div class="tnv"><div class="tv u" id="otk" style="color:var(--purple)">134K</div><div class="tl">TOKENS</div></div>
         <div class="tnv"><div class="tv">—</div><div class="tl">LIMITE</div></div>
@@ -969,156 +833,110 @@ window.addEventListener('load',()=>{
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-(function(){
-  const canvas = document.getElementById('nexus-3d');
-  if(!canvas) return;
+(function initJARVIS(){
+  const canvas=document.getElementById('nexus-3d');
+  if(!canvas||typeof THREE==='undefined'){setTimeout(initJARVIS,200);return;}
+  const W=320,H=320;
+  canvas.width=W;canvas.height=H;
+  const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
+  renderer.setSize(W,H);renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  renderer.setClearColor(0x000000,0);
+  const scene=new THREE.Scene();
+  const cam=new THREE.PerspectiveCamera(48,W/H,0.1,100);
+  cam.position.set(0,0,4.8);
 
-  const W = 320, H = 320;
-  canvas.width = W; canvas.height = H;
-
-  const renderer = new THREE.WebGLRenderer({canvas, alpha:true, antialias:true});
-  renderer.setSize(W, H);
-  renderer.setPixelRatio(window.devicePixelRatio||1);
-  renderer.setClearColor(0x000000, 0);
-
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(45, W/H, 0.1, 1000);
-  camera.position.set(0, 0, 5);
-
-  const C = 0x00C8FF;
-  const G = 0x00FF88;
-
-  // Criar anéis orbitais em 3D
-  function makeRing(r, tube, color, opacity, tiltX, tiltZ){
-    const geo = new THREE.TorusGeometry(r, tube, 8, 80);
-    const mat = new THREE.MeshBasicMaterial({color, transparent:true, opacity});
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.rotation.x = tiltX;
-    mesh.rotation.z = tiltZ;
-    return mesh;
+  // ── Arcos HUD ──────────────────────────────────
+  function arc(r,gapFrac,opacity,rotX,rotY,rotZ,spd,col){
+    const pts=[];const total=Math.PI*2;const gap=total*gapFrac;
+    const n=Math.floor(160*(1-gapFrac));
+    for(let i=0;i<=n;i++){const a=gap/2+(total-gap)*(i/n);pts.push(new THREE.Vector3(Math.cos(a)*r,Math.sin(a)*r,0));}
+    const g=new THREE.BufferGeometry().setFromPoints(pts);
+    const m=new THREE.LineBasicMaterial({color:col||0x00C8FF,transparent:true,opacity});
+    const l=new THREE.Line(g,m);l.rotation.set(rotX,rotY,rotZ);
+    l.userData={spd,ax:['x','y','z'][Math.floor(rotX*3+rotZ)%3]||'y'};
+    return l;
   }
 
-  const rings = [
-    makeRing(2.0, 0.008, C, 0.12, 0, 0),
-    makeRing(1.7, 0.010, C, 0.18, 0.3, 0.1),
-    makeRing(1.4, 0.012, C, 0.28, -0.2, 0.4),
-    makeRing(1.1, 0.010, C, 0.38, 0.8, -0.2),
-    makeRing(0.8, 0.012, C, 0.50, -0.5, 0.7),
-    makeRing(0.5, 0.008, C, 0.60, 1.2, 0.3),
+  const PI=Math.PI;
+  const arcs=[
+    arc(1.90,0.00,0.08,0,0,0,          0.004),
+    arc(1.75,0.12,0.18,PI/2,0,0,       -0.007),
+    arc(1.58,0.05,0.25,0.35,0.1,0,     0.009),
+    arc(1.40,0.20,0.35,-0.25,0,0.5,    -0.012,0x00E5FF),
+    arc(1.22,0.00,0.22,PI/2,0.3,0.1,   0.014),
+    arc(1.05,0.35,0.45,0.8,-0.4,0,     -0.018,0x00E5FF),
+    arc(0.88,0.00,0.20,0,PI/2,0,        0.022,0x00FF88),
+    arc(0.70,0.25,0.55,0.5,0.5,0.3,    -0.028),
+    arc(0.52,0.10,0.40,PI/3,PI/4,0,     0.032,0x00E5FF),
   ];
+  arcs.forEach(a=>scene.add(a));
 
-  rings.forEach(r => scene.add(r));
-
-  // Esfera central — núcleo
-  const coreGeo = new THREE.SphereGeometry(0.22, 32, 32);
-  const coreMat = new THREE.MeshBasicMaterial({color:0xffffff, transparent:true, opacity:0.95});
-  const core = new THREE.Mesh(coreGeo, coreMat);
-  scene.add(core);
-
-  // Halo do núcleo
-  const haloGeo = new THREE.SphereGeometry(0.32, 32, 32);
-  const haloMat = new THREE.MeshBasicMaterial({color:C, transparent:true, opacity:0.12, side:THREE.BackSide});
-  const halo = new THREE.Mesh(haloGeo, haloMat);
-  scene.add(halo);
-
-  // Partículas orbitando
-  const ptGeo = new THREE.BufferGeometry();
-  const ptCount = 80;
-  const ptPos = new Float32Array(ptCount * 3);
-  const ptAngles = [];
-  const ptRadii = [];
-  const ptSpeeds = [];
-  const ptTilts = [];
-
-  for(let i = 0; i < ptCount; i++){
-    const angle = Math.random() * Math.PI * 2;
-    const r = 0.4 + Math.random() * 1.7;
-    const tiltX = (Math.random() - 0.5) * Math.PI;
-    const tiltZ = (Math.random() - 0.5) * Math.PI;
-    ptAngles.push(angle);
-    ptRadii.push(r);
-    ptSpeeds.push(0.003 + Math.random() * 0.008);
-    ptTilts.push({x: tiltX, z: tiltZ});
-    ptPos[i*3] = r * Math.cos(angle);
-    ptPos[i*3+1] = r * Math.sin(angle) * 0.3;
-    ptPos[i*3+2] = r * Math.sin(angle);
+  // ── Marcadores / ticks ──────────────────────────
+  function ticks(r,n,opacity,rotX,rotZ,col){
+    const g=new THREE.Group();
+    for(let i=0;i<n;i++){
+      const a=(PI*2/n)*i;const len=i%4===0?0.09:0.05;
+      const geo=new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(Math.cos(a)*(r-len),Math.sin(a)*(r-len),0),
+        new THREE.Vector3(Math.cos(a)*(r+len),Math.sin(a)*(r+len),0),
+      ]);
+      g.add(new THREE.Line(geo,new THREE.LineBasicMaterial({color:col||0x00C8FF,transparent:true,opacity})));
+    }
+    g.rotation.x=rotX;g.rotation.z=rotZ;return g;
   }
+  const tRings=[
+    ticks(1.90,48,0.20,0,0),
+    ticks(1.40,32,0.28,0.35,0.2,0x00E5FF),
+    ticks(0.88,20,0.35,PI/2,0,0x00FF88),
+  ];
+  tRings.forEach(t=>scene.add(t));
 
-  ptGeo.setAttribute('position', new THREE.BufferAttribute(ptPos, 3));
-  const ptMat = new THREE.PointsMaterial({color:C, size:0.04, transparent:true, opacity:0.7});
-  const particles = new THREE.Points(ptGeo, ptMat);
-  scene.add(particles);
+  // ── Núcleo ────────────────────────────────────
+  const wireGeo=new THREE.IcosahedronGeometry(0.26,2);
+  const wireMat=new THREE.MeshBasicMaterial({color:0x00C8FF,wireframe:true,transparent:true,opacity:0.30});
+  const wire=new THREE.Mesh(wireGeo,wireMat);scene.add(wire);
 
-  // Velocidades de rotação dos anéis
-  const rotSpeeds = [0.002, -0.003, 0.005, -0.004, 0.007, -0.006];
-  const rotAxes = ['y','x','z','y','x','z'];
+  const cGeo=new THREE.SphereGeometry(0.14,32,32);
+  const cMat=new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.95});
+  const core=new THREE.Mesh(cGeo,cMat);scene.add(core);
 
-  let frame = 0;
-  let listening = false;
-  let pulse = 0;
+  const hGeo=new THREE.SphereGeometry(0.20,32,32);
+  scene.add(new THREE.Mesh(hGeo,new THREE.MeshBasicMaterial({color:0x00C8FF,transparent:true,opacity:0.07,side:THREE.BackSide})));
 
-  function animate(){
-    requestAnimationFrame(animate);
-    frame++;
-
-    // Verificar estado de escuta
-    const isL = window.isListen || false;
-    if(isL !== listening){
-      listening = isL;
-    }
-
-    // Rotação dos anéis
-    rings.forEach((ring, i) => {
-      const ax = rotAxes[i];
-      ring.rotation[ax] += rotSpeeds[i] * (listening ? 3 : 1);
-    });
-
-    // Pulso do núcleo quando ouvindo
-    if(listening){
-      pulse += 0.1;
-      const s = 1 + Math.sin(pulse) * 0.15;
-      core.scale.set(s, s, s);
-      halo.scale.set(s * 1.2, s * 1.2, s * 1.2);
-      coreMat.opacity = 0.7 + Math.sin(pulse) * 0.3;
-    } else {
-      const s = 1 + Math.sin(frame * 0.02) * 0.05;
-      core.scale.set(s, s, s);
-      halo.scale.set(1.2, 1.2, 1.2);
-      coreMat.opacity = 0.95;
-    }
-
-    // Atualizar partículas
-    const pos = ptGeo.attributes.position.array;
-    for(let i = 0; i < ptCount; i++){
-      ptAngles[i] += ptSpeeds[i] * (listening ? 2.5 : 1);
-      const a = ptAngles[i];
-      const r = ptRadii[i];
-      const tx = ptTilts[i].x;
-      const tz = ptTilts[i].z;
-      pos[i*3]   = r * Math.cos(a) * Math.cos(tz) - r * Math.sin(a) * 0.3 * Math.sin(tz);
-      pos[i*3+1] = r * Math.cos(a) * Math.sin(tx) * 0.5 + r * Math.sin(a) * 0.3 * Math.cos(tx);
-      pos[i*3+2] = r * Math.sin(a) * Math.cos(tx);
-    }
-    ptGeo.attributes.position.needsUpdate = true;
-    ptMat.opacity = listening ? 0.9 : 0.55 + Math.sin(frame * 0.03) * 0.15;
-
-    // Rotação suave da cena toda
-    scene.rotation.y = Math.sin(frame * 0.005) * 0.3;
-
-    renderer.render(scene, camera);
-  }
-
-  animate();
-
-  // Interação de clique — pulso visual
-  canvas.addEventListener('click', ()=>{
-    pulse = 0;
-    rings.forEach(r => {
-      r.material.opacity = Math.min(r.material.opacity * 2, 1);
-      setTimeout(() => { r.material.opacity /= 2; }, 300);
-    });
+  // ── Linhas de scan holográficas ───────────────
+  const scans=[];
+  [[-0.30,0.50],[-0.10,0.70],[0.10,0.45],[0.28,0.60]].forEach(([y,len])=>{
+    const geo=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-len,y,0.6),new THREE.Vector3(len,y,0.6)]);
+    const mat=new THREE.LineBasicMaterial({color:0x00C8FF,transparent:true,opacity:0.12});
+    const l=new THREE.Line(geo,mat);l.userData={ph:Math.random()*PI*2};scans.push(l);scene.add(l);
   });
 
+  // ── Loop ──────────────────────────────────────
+  let f=0;
+  (function loop(){
+    requestAnimationFrame(loop);f++;
+    const t=f*0.016;
+    const isL=window.isListen||false;
+    const sp=isL?3.5:1;
+
+    arcs.forEach(a=>{a.rotation[a.userData.ax]+=a.userData.spd*sp;});
+    tRings[0].rotation.z+=0.002*sp;
+    tRings[1].rotation.z-=0.003*sp;
+    tRings[2].rotation.x+=0.005*sp;
+
+    wire.rotation.y+=0.010*sp;wire.rotation.x+=0.005*sp;
+    wireMat.opacity=0.22+Math.sin(t*2)*0.10*(isL?1.8:1);
+
+    const p=1+Math.sin(t*(isL?8:2))*(isL?0.16:0.04);
+    core.scale.set(p,p,p);cMat.opacity=0.85+Math.sin(t*3)*0.15;
+
+    scans.forEach(l=>{l.material.opacity=0.08+0.07*Math.sin(t*1.5+l.userData.ph);});
+
+    cam.position.x=Math.sin(t*0.18)*0.25;
+    cam.position.y=Math.cos(t*0.13)*0.12;
+    cam.lookAt(0,0,0);
+    renderer.render(scene,cam);
+  })();
 })();
 </script>
 
