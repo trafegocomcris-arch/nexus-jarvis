@@ -1,24 +1,13 @@
 {
-  "name": "NEXUS — ACT Digital",
+  "name": "NEXUS",
   "short_name": "NEXUS",
-  "description": "Command Center · Multi-Agent AI System",
+  "description": "ACT Digital Command Center",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#020c10",
-  "theme_color": "#00e5ff",
-  "orientation": "landscape",
+  "background_color": "#00040A",
+  "theme_color": "#00C8FF",
   "icons": [
-    {
-      "src": "/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
+    {"src": "/icon-192.png?v=3", "sizes": "192x192", "type": "image/png"},
+    {"src": "/icon-512.png?v=3", "sizes": "512x512", "type": "image/png"}
   ]
 }
