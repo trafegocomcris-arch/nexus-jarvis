@@ -257,7 +257,7 @@ body{
 .proj-card:hover{border-color:var(--j-b2)!important;}
 .proj-header{border-bottom:1px solid var(--j-b1)!important;padding:9px 12px!important;}
 .proj-name{font-size:11px!important;color:var(--j-t1)!important;letter-spacing:1.5px!important;font-weight:500!important;}
-.proj-task a{font-size:11px!important;color:var(--j-t2)!important;}
+.proj-task a{font-size:11px!important;color:var(--j-t2)!important;cursor:pointer!important;}
 .proj-task a:hover{color:var(--j-c1)!important;}
 .ps-done{color:var(--j-green)!important;font-size:9px!important;}
 .ps-wip{color:#F5B113!important;font-size:9px!important;}
@@ -447,14 +447,82 @@ body{
 
   <!-- CLICKUP TASKS -->
   <div class="rcon a" id="rcon-tarefas">
-    <div class="slbl" style="margin-bottom:6px">
-      Em Progresso
-      <span class="cu-count">27</span>
+  <div class="slbl" style="margin-bottom:10px">Tarefas por Projeto</div>
+  <div style="overflow-y:auto;max-height:calc(100vh - 200px);display:flex;flex-direction:column;gap:5px;">
+
+    <div class="proj-card" onclick="this.classList.toggle('open')">
+      <div class="proj-header"><span class="proj-name">ACT DIGITAL</span><span class="proj-stats"><span class="ps-wip">⟳ 5</span>&nbsp;<span class="ps-todo">● 10</span></span></div>
+      <div class="proj-tasks">
+        <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="clickup://t/868k7ezx5">ONBOARDING NOVOS CLIENTES</a></div>
+        <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="clickup://t/868k53m6u">APPS & MELHORIAS COM IA</a></div>
+        <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="clickup://t/868k53z2p">PROSPECÇÃO E REUNIÃO</a></div>
+        <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="clickup://t/868k54680">PENDÊNCIAS CONTÁBEIS</a></div>
+        <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="clickup://t/868k546cx">DIMINUIR PRO-LABORE</a></div>
+        <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="clickup://t/868k7f0dt">SEGREDOS DA TERRA</a></div>
+        <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="clickup://t/868k7f0c4">REFORMA DE CADEIRAS</a></div>
+        <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="clickup://t/868k7f08w">FLUXO AUTOMAÇÃO ONBOARDING</a></div>
+        <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="clickup://t/868k7eqkp">DOCS AGÊNCIA</a></div>
+        <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="clickup://t/868k7eqgh">MELHORIAS INTERNAS</a></div>
+        <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="clickup://t/868k7eqcy">VERIFICAR TODOS OS CLIENTES</a></div>
+        <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="clickup://t/868k541vd">FECHAMENTO: ARUMÁ AÇAÍ</a></div>
+        <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="clickup://t/868k541fp">FECHAMENTO: ACIUM LOBÃO</a></div>
+        <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="clickup://t/868k6cbzt">MUDANÇA DE ENDEREÇO</a></div>
+        <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="clickup://t/868k6cby1">DISTRATO COLABORADORES</a></div>
+      </div>
     </div>
-    <div id="cu-list" style="overflow-y:auto;max-height:calc(100vh - 220px)">
-      <!-- tasks injected by JS -->
+
+    <div class="proj-card" onclick="this.classList.toggle('open')">
+      <div class="proj-header"><span class="proj-name">LIMAS SHOPPING</span><span class="proj-stats"><span class="ps-wip">⟳ 1</span></span></div>
+      <div class="proj-tasks">
+        <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="clickup://t/868k5c7xe">CAMPANHA GRUPOS WPP</a></div>
+      </div>
     </div>
+
+    <div class="proj-card" onclick="this.classList.toggle('open')">
+      <div class="proj-header"><span class="proj-name">DR ANDRÉ MORO</span><span class="proj-stats"><span class="ps-wip">⟳ 1</span></span></div>
+      <div class="proj-tasks">
+        <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="clickup://t/868k49a2u">REUNIÃO DE ALINHAMENTO</a></div>
+      </div>
+    </div>
+
+    <div class="proj-card" onclick="this.classList.toggle('open')">
+      <div class="proj-header"><span class="proj-name">FADA DO MEGAHAIR</span><span class="proj-stats"><span class="ps-wip">⟳ 1</span></span></div>
+      <div class="proj-tasks">
+        <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="clickup://t/868k52ay2">COBRANÇA E ALINHAMENTO</a></div>
+      </div>
+    </div>
+
+    <div class="proj-card" onclick="this.classList.toggle('open')">
+      <div class="proj-header"><span class="proj-name">GRACILENE BOUTIQUE</span><span class="proj-stats"><span class="ps-done">✓ 1</span></span></div>
+      <div class="proj-tasks">
+        <div class="proj-task"><div class="pt-dot pt-done"></div><a href="clickup://t/868k7f0md">ANÚNCIOS FESTIVAL ABACAXI</a></div>
+      </div>
+    </div>
+
+    <div class="proj-card" onclick="this.classList.toggle('open')">
+      <div class="proj-header"><span class="proj-name">IG IMPORT JUAZEIRO</span><span class="proj-stats"><span class="ps-done">✓ 1</span></span></div>
+      <div class="proj-tasks">
+        <div class="proj-task"><div class="pt-dot pt-done"></div><a href="clickup://t/868k7ey6h">SUBIR NOVOS ANÚNCIOS</a></div>
+      </div>
+    </div>
+
+    <div class="proj-card" onclick="this.classList.toggle('open')">
+      <div class="proj-header"><span class="proj-name">GIIMPORTADOS</span><span class="proj-stats"><span class="ps-todo">● 1</span></span></div>
+      <div class="proj-tasks">
+        <div class="proj-task"><div class="pt-dot pt-todo"></div><a href="clickup://t/868k4hz4a">PLANEJAMENTO + PROPOSTA</a></div>
+      </div>
+    </div>
+
+    <div class="proj-card" onclick="this.classList.toggle('open')">
+      <div class="proj-header"><span class="proj-name">GERAL</span><span class="proj-stats"><span class="ps-wip">⟳ 2</span></span></div>
+      <div class="proj-tasks">
+        <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="clickup://t/868k529zn">COBRAR PAGAMENTOS</a></div>
+        <div class="proj-task"><div class="pt-dot pt-wip"></div><a href="clickup://t/868k52a9b">PENDÊNCIAS LICITAÇÃO</a></div>
+      </div>
+    </div>
+
   </div>
+</div>
 
   <!-- INTEGRATIONS -->
   <div class="rcon" id="rcon-int">
