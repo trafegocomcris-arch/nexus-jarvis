@@ -661,6 +661,7 @@ const tasks=[
 
 function renderTasks(){
   const list=document.getElementById('cu-list');
+  if(!list)return;
   list.innerHTML=tasks.map(t=>`
     <div class="cu-task">
       <div class="cu-task-name">${t.name}</div>
@@ -910,8 +911,7 @@ window.addEventListener('load',()=>{
   },600);
 });
 </script>
-<script>if('serviceWorker'in navigator){window.addEventListener('load',()=>{
-  buildVoiceSelector();navigator.serviceWorker.register('/sw.js').catch(()=>{});});}</script>
+<script>if('serviceWorker'in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/sw.js').catch(()=>{});});}</script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
