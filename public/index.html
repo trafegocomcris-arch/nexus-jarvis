@@ -953,7 +953,7 @@ function processCmd(txt){
 
   setTrt('Consultando Gemini...','nx');
 
-  const MODELS=['gemini-2.0-flash-exp','gemini-1.5-flash-latest','gemini-1.5-pro-latest'];
+  const MODELS=['gemini-2.0-flash','gemini-2.5-flash','gemini-2.5-pro'];
 
   (async function tryGemini(){
     for(const model of MODELS){
