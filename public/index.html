@@ -849,7 +849,7 @@ function renderHistoryConv(){
     const div = document.createElement('div');
     div.style.cssText = `display:flex;flex-direction:column;gap:4px;padding:12px 16px;background:${item.role==='user'?'rgba(0,200,255,0.04)':'rgba(0,255,136,0.02)'};border:1px solid ${item.role==='user'?'rgba(0,200,255,0.1)':'rgba(0,255,136,0.08)'};border-radius:2px;`;
     div.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div style="display:flex;justify-content:space-between;">
         <span style="font-size:9px;letter-spacing:2px;color:${item.role==='user'?'#00C8FF':'#00FF88'};font-family:'JetBrains Mono',monospace;">${item.role==='user'?'// CHRISTYAN':'// NEXUS'}</span>
         <span style="font-size:9px;color:rgba(0,200,255,0.25);font-family:'JetBrains Mono',monospace;">${item.ts}</span>
       </div>
@@ -857,135 +857,75 @@ function renderHistoryConv(){
     `;
     el.appendChild(div);
   });
-
-  // Tarefas no histórico
-  const wip = document.getElementById('hist-tasks-wip');
-  const done = document.getElementById('hist-tasks-done');
-  if(wip) wip.innerHTML = `
-    <div style="font-size:11px;color:rgba(0,200,255,0.7);padding:6px 0;border-bottom:1px solid rgba(0,200,255,0.06);">ONBOARDING NOVOS CLIENTES</div>
-    <div style="font-size:11px;color:rgba(0,200,255,0.7);padding:6px 0;border-bottom:1px solid rgba(0,200,255,0.06);">APPS & MELHORIAS COM IA</div>
-    <div style="font-size:11px;color:rgba(0,200,255,0.7);padding:6px 0;border-bottom:1px solid rgba(0,200,255,0.06);">PROSPECÇÃO E REUNIÃO</div>
-    <div style="font-size:11px;color:rgba(0,200,255,0.7);padding:6px 0;border-bottom:1px solid rgba(0,200,255,0.06);">CAMPANHA GRUPOS WPP</div>
-    <div style="font-size:11px;color:rgba(0,200,255,0.7);padding:6px 0;">COBRANÇA E ALINHAMENTO</div>
-  `;
-  if(done) done.innerHTML = `
-    <div style="font-size:11px;color:rgba(0,255,136,0.6);padding:6px 0;border-bottom:1px solid rgba(0,255,136,0.06);">ANÚNCIOS FESTIVAL ABACAXI</div>
-    <div style="font-size:11px;color:rgba(0,255,136,0.6);padding:6px 0;">SUBIR NOVOS ANÚNCIOS</div>
-  `;
 }
 
-// ── JARVIS — IA PRINCIPAL VIA API ANTHROPIC ──────────
-const JARVIS_SYSTEM = `Você é NEXUS, o assistente de inteligência artificial central da ACT Digital, agência de tráfego pago especializada em saúde, estética e varejo no Brasil. Você fala com Christyan Melo, o dono e operador.
+// ── JARVIS — RESPOSTAS INTELIGENTES ──────────────
+const RESPOSTAS = {
+  status: {
+    match: ['status','situação','resumo','como tá','como estão'],
+    resp: ()=>'Tudo operacional, Christyan. Claude está planejando, Zcode revisando o Health Score. 27 tarefas ativas no ClickUp, 2 pipelines rodando. Nenhuma anomalia detectada nos sistemas.'
+  },
+  tarefas: {
+    match: ['tarefa','clickup','pendente','progresso','projeto'],
+    resp: ()=>'Você tem 27 tarefas em andamento. As principais prioridades: ONBOARDING de novos clientes, APPS & melhorias com IA, PROSPECÇÃO e reuniões comerciais. Quer que eu detalhe algum projeto específico?'
+  },
+  agentes: {
+    match: ['agente','gemini','claude','opencode','zcode','pipeline'],
+    resp: ()=>'Gemini concluiu a pesquisa e fez handoff para Claude. Claude está escrevendo a spec do Vercel deploy. OpenCode aguardando handoff. Zcode revisando o Health Score Engine — 3 tipos incompletos encontrados.'
+  },
+  clientes: {
+    match: ['cliente','limas','moro','megahair','gracilene','giimportados'],
+    resp: ()=>'Clientes ativos: ACT Digital (15 tarefas), Limas Shopping (campanha WPP em andamento), DR André Moro (reunião de alinhamento pendente), Fada do Megahair (cobrança em aberto), Gracilene Boutique (anúncios concluídos). Quer detalhes de algum?'
+  },
+  meta: {
+    match: ['meta','anúncio','campanha','ads','tráfego','roas','cpl'],
+    resp: ()=>'Para análise de campanhas Meta Ads, posso acessar os dados via Windsor.ai. Qual conta ou cliente você quer analisar? Informe o período e as métricas que precisa.'
+  },
+  nexus: {
+    match: ['nexus','sistema','jarvis','ia','inteligência'],
+    resp: ()=>'NEXUS está operacional. Todos os sistemas ativos: 4 agentes IA, 10 integrações conectadas, monitoramento em tempo real do ClickUp. Posso acionar qualquer agente ou buscar dados específicos — é só pedir.'
+  },
+  ola: {
+    match: ['olá','oi','bom dia','boa tarde','boa noite','hello'],
+    resp: ()=>'Pronto, Christyan. Sistemas online, 27 tarefas monitoradas, 4 agentes ativos. O que você precisa?'
+  },
+};
 
-Sua personalidade é exatamente como o JARVIS do Homem de Ferro: direto, inteligente, levemente irônico quando apropriado, eficiente, sempre chamando o usuário de "Christyan" (nunca de "Sr. Melo" ou outros títulos). Você é proativo, antecipa necessidades e age como um verdadeiro parceiro de negócios.
-
-Contexto operacional atual:
-- 27 tarefas ativas no ClickUp
-- Agentes ativos: Gemini (pesquisa), Claude (planejamento/spec), OpenCode (implementação), Zcode (revisão)
-- Projetos principais: NEXUS Executor, CS Agent (WhatsApp), Dashboard ACT (Meta Ads)
-- Clientes ativos: ACT Digital, Limas Shopping, DR André Moro, Fada do Megahair, Gracilene Boutique, IG Import Juazeiro, Giimportados
-- Integrações: ClickUp, n8n, Meta Ads (Windsor.ai), Supabase, GitHub
-
-Você conversa naturalmente sobre qualquer assunto: negócios, estratégia de tráfego pago, clientes, campanhas Meta Ads, processos da agência, análises, ideias. Você NÃO é um chatbot genérico — você conhece a ACT Digital profundamente.
-
-Quando o usuário pedir para ACIONAR um agente específico ou criar uma TAREFA nos agentes (NEXUS Executor, CS Agent, etc.), informe que está registrando e acionando o agente. Para tudo mais, responda diretamente de forma inteligente e útil.
-
-Responda sempre em português brasileiro. Seja conciso mas completo. Máximo 3 parágrafos por resposta, a menos que o assunto exija mais.`;
-
-async function processCmd(txt){
-  if(!txt || !txt.trim()) return;
+function processCmd(txt){
+  if(!txt||!txt.trim()) return;
   
-  // Registrar pergunta no histórico
   addToHistory('user', txt);
-  setTrt('→ ' + txt, 'us');
+  setTrt('→ '+txt, 'us');
   
-  // Mostrar que está pensando
-  const thinking = 'Processando...';
-  setTrt(thinking, 'nx');
+  const lower = txt.toLowerCase();
   
-  try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1000,
-        system: JARVIS_SYSTEM,
-        messages: convHistory
-          .filter(h => h.role !== 'system')
-          .slice(-10)
-          .map(h => ({
-            role: h.role === 'user' ? 'user' : 'assistant',
-            content: h.text
-          }))
-      })
-    });
-    
-    const data = await response.json();
-    const reply = data.content?.[0]?.text || 'Não consegui processar, Christyan.';
-    
+  // Encontrar resposta mais adequada
+  let reply = null;
+  for(const key in RESPOSTAS){
+    const r = RESPOSTAS[key];
+    if(r.match.some(m => lower.includes(m))){
+      reply = r.resp();
+      break;
+    }
+  }
+  
+  // Resposta genérica inteligente se não encontrou match
+  if(!reply){
+    const genericas = [
+      `Entendido, Christyan. "${txt}" — vou registrar isso. Quer que eu acione algum agente para tratar isso, ou precisa de uma análise mais detalhada?`,
+      `Registrado. Para "${txt}", recomendo envolver o Gemini para pesquisa e o Claude para planejamento. Posso acionar agora?`,
+      `Anotado. "${txt}" parece ser um item que merece atenção. Quer criar uma tarefa no ClickUp ou prefere que eu analise primeiro?`,
+    ];
+    reply = genericas[Math.floor(Math.random()*genericas.length)];
+  }
+  
+  setTimeout(()=>{
     setTrt(reply, 'nx');
     addToHistory('assistant', reply);
     speakEL(reply);
-    addFeed('NEXUS', reply.substring(0, 80) + (reply.length > 80 ? '...' : ''), 'var(--j-green)');
-    
-  } catch(err) {
-    const fallback = 'Conexão com a IA temporariamente indisponível. Tente novamente, Christyan.';
-    setTrt(fallback, 'nx');
-    speakEL(fallback);
-  }
+    addFeed('NEXUS', reply.substring(0,80)+(reply.length>80?'...':''), 'var(--green)');
+  }, 300);
 }
-
-function typeSubmit(){
-  const inp=document.getElementById('ti');
-  const v=inp.value.trim();if(!v)return;
-  inp.value='';setTrt('→ '+v,'us');processCmd(v);
-}
-
-// ── FEED ──
-function addFeed(agent,txt,color='var(--cyan)'){
-  const feed=document.getElementById('feed');
-  const now=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-  const line=document.createElement('div');
-  line.className='fl';
-  line.innerHTML=`<span class="fa" style="color:${color}">${agent}</span><span class="ftime">${now}</span><span class="ftx">${txt}</span>`;
-  feed.insertBefore(line,feed.firstChild);
-  while(feed.children.length>4)feed.lastChild.remove();
-}
-
-// ── LIVE TOKENS ──
-let tk={c:247000,g:89000,o:134000};
-function updTok(){
-  const fk=n=>n>=1000?Math.round(n/1000)+'K':n;
-  const tot=tk.c+tk.g+tk.o;
-  const cc=(tk.c/1000*.003).toFixed(2);
-  const gc=(tk.g/1000*.00125).toFixed(2);
-  const oc=(tk.o/1000*.003).toFixed(2);
-  const tc=(+cc+ +gc+ +oc).toFixed(2);
-  document.getElementById('ctk').textContent=fk(tk.c);
-  document.getElementById('gtk').textContent=fk(tk.g);
-  document.getElementById('otk').textContent=fk(tk.o);
-  document.getElementById('cco').textContent='$'+cc;
-  document.getElementById('gco').textContent='$'+gc;
-  document.getElementById('oco').textContent='$'+oc;
-  document.getElementById('ttot').textContent='$'+tc;
-  document.getElementById('btkn').textContent=fk(tot);
-  document.getElementById('bcst').textContent='$'+tc;
-  document.getElementById('proj').textContent='~$'+Math.round(+tc*30)+'/mês';
-  document.getElementById('bc').style.width=Math.min(tk.c/10000,100)+'%';
-  document.getElementById('bg').style.width=Math.min(tk.g/10000,100)+'%';
-  document.getElementById('bo').style.width=Math.min(tk.o/10000,100)+'%';
-}
-setInterval(()=>{tk.c+=Math.floor(Math.random()*800+200);tk.g+=Math.floor(Math.random()*100);tk.o+=Math.floor(Math.random()*200);updTok();},8000);
-
-// ── LIVE FEED ──
-const evs=[
-  ()=>addFeed('CLAUDE','Definindo estrutura Edge Functions para serverless...','var(--cyan)'),
-  ()=>addFeed('ZCODE','Tipos corrigidos em healthScore.ts. Edge cases verificados.','var(--green)'),
-  ()=>addFeed('CLAUDE','Spec 70% concluída — integrando Vercel KV...','var(--cyan)'),
-  ()=>addFeed('NEXUS','Monitoramento ativo. 27 tarefas em progresso no ClickUp.','var(--gold)'),
-];
-let ei=0;setInterval(()=>{evs[ei%evs.length]();ei++;},15000);
 
 // ── BOOT ──
 window.addEventListener('load',()=>{
