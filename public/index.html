@@ -953,28 +953,30 @@ function processCmd(txt){
 
   setTrt('Consultando Gemini...','nx');
 
-  fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',{
-    method:'POST',
-    headers:{'Content-Type':'application/json','X-goog-api-key':GK},
-    body:JSON.stringify({
-      contents:[
-        {role:'user',parts:[{text:'[SISTEMA]: '+SYSTEM+'\n\n[USUÁRIO]: '+txt}]}
-      ]
-    })
-  })
-  .then(r=>r.json())
-  .then(d=>{
-    const reply=d?.candidates?.[0]?.content?.parts?.[0]?.text||'Não consegui processar, Christyan.';
-    setTrt(reply,'nx');
-    if(typeof addToHistory==='function')addToHistory('assistant',reply);
-    speakEL(reply);
-    addFeed('NEXUS',reply.substring(0,80)+(reply.length>80?'...':''),'var(--green)');
-  })
-  .catch(()=>{
-    const err='Gemini indisponível no momento, Christyan. Tente novamente.';
-    setTrt(err,'nx');
-    speakEL(err);
-  });
+  const MODELS=['gemini-2.0-flash-exp','gemini-1.5-flash-latest','gemini-1.5-pro-latest'];
+
+  (async function tryGemini(){
+    for(const model of MODELS){
+      try{
+        const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','X-goog-api-key':GK},
+          body:JSON.stringify({contents:[{role:'user',parts:[{text:'[SISTEMA]: '+SYSTEM+'\n[USUÁRIO]: '+txt}]}]})
+        });
+        const d=await r.json();
+        console.log('Modelo',model,'resposta:',JSON.stringify(d).substring(0,120));
+        const reply=d?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if(reply){
+          setTrt(reply,'nx');
+          if(typeof addToHistory==='function')addToHistory('assistant',reply);
+          speakEL(reply);
+          addFeed('NEXUS',reply.substring(0,80)+(reply.length>80?'...':''),'var(--green)');
+          return;
+        }
+      }catch(e){console.warn('Erro modelo',model,e);}
+    }
+    setTrt('Não consegui conectar ao Gemini, Christyan.','nx');
+  })();
 }
 
 function typeSubmit(){
