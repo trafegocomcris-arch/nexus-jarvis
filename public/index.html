@@ -953,7 +953,7 @@ function processCmd(txt){
 
   setTrt('Consultando Gemini...','nx');
 
-  fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-latest:generateContent',{
+  fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',{
     method:'POST',
     headers:{'Content-Type':'application/json','X-goog-api-key':GK},
     body:JSON.stringify({
