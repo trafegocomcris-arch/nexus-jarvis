@@ -834,17 +834,42 @@ const fb=[
 ];
 
 function processCmd(txt){
-  const l=txt.toLowerCase();
-  let found=null;
-  for(const k of Object.keys(cmds)){if(cmds[k].m.some(w=>l.includes(w))){found=cmds[k];break;}}
-  const resp=found?found.r():fb[Math.floor(Math.random()*fb.length)](txt);
-  setTimeout(()=>{
-    setTrt(resp,'nx');speakEL(resp);
-    addFeed('NEXUS',`Respondeu: "${txt.substring(0,35)}${txt.length>35?'...':''}"`,`var(--gold)`);
-    if(found===cmds.tokens)swtab('tok',document.querySelectorAll('.rtab')[2]);
-    if(found===cmds.integracoes)swtab('int',document.querySelectorAll('.rtab')[1]);
-    if(found===cmds.tarefas)swtab('tarefas',document.querySelector('.rtab'));
-  },400);
+  if(!txt||!txt.trim())return;
+  setTrt('→ '+txt,'us');
+
+  const GK=window.__env&&window.__env.GK||'';
+
+  if(!GK){
+    // Fallback local se key não carregou
+    const l=txt.toLowerCase();
+    let found=null;
+    for(const k of Object.keys(cmds)){if(cmds[k].m.some(w=>l.includes(w))){found=cmds[k];break;}}
+    const resp=found?found.r():fb[Math.floor(Math.random()*fb.length)](txt);
+    setTimeout(()=>{setTrt(resp,'nx');speakEL(resp);},300);
+    return;
+  }
+
+  // Gemini Pro
+  const SYSTEM=`Você é NEXUS, assistente IA da ACT Digital, agência de tráfego pago de Christyan Melo no Brasil. Personalidade: JARVIS do Homem de Ferro — direto, inteligente, levemente irônico, chama sempre de "Christyan". Você sabe tudo sobre a agência: 27 tarefas no ClickUp, agentes Gemini/Claude/OpenCode/Zcode, clientes como Limas Shopping, DR André Moro, Fada do Megahair, Gracilene Boutique. Responda qualquer pergunta — clima, negócios, estratégia, tudo. Português brasileiro. Máximo 2 parágrafos.`;
+
+  fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key='+GK,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      system_instruction:{parts:[{text:SYSTEM}]},
+      contents:[{role:'user',parts:[{text:txt}]}]
+    })
+  })
+  .then(r=>r.json())
+  .then(d=>{
+    const reply=d?.candidates?.[0]?.content?.parts?.[0]?.text||'Não consegui processar, Christyan.';
+    setTrt(reply,'nx');
+    speakEL(reply);
+    addFeed('NEXUS',reply.substring(0,80)+(reply.length>80?'...':''),'var(--green)');
+  })
+  .catch(()=>{
+    setTrt('Conexão com Gemini falhou. Tente novamente, Christyan.','nx');
+  });
 }
 
 function typeSubmit(){
